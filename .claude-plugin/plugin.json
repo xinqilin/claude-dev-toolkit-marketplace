@@ -1,0 +1,10 @@
+{
+  "name": "bill-lin-dev-toolkit",
+  "version": "1.0.0",
+  "description": "Enterprise Java/Spring Boot development toolkit with specialized agents for senior developers and architects",
+  "author": "bill.lin",
+  "homepage": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
+  "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
+  "license": "MIT",
+  "keywords": ["java", "spring-boot", "jpa", "sql-optimization", "code-review", "clean-code", "best-practices", "pci-dss", "performance", "refactoring"]
+}
