@@ -5,18 +5,18 @@
   },
   "plugins": [
     {
-      "name": "java-unit-test-reviewer",
-      "source": "./plugins/java-unit-test-reviewer",
+      "name": "bill-billing-unit-test-reviewer",
+      "source": "./plugins/bill-billing-unit-test-reviewer",
       "description": "Senior unit test reviewer specializing in Java/Spring Boot testing best practices"
     },
     {
-      "name": "java-code-reviewer",
-      "source": "./plugins/java-code-reviewer",
+      "name": "bill-code-reviewer",
+      "source": "./plugins/bill-code-reviewer",
       "description": "Expert code reviewer focusing on clean code, design patterns, and Java best practices"
     },
     {
-      "name": "java-spring-developer",
-      "source": "./plugins/java-spring-developer",
+      "name": "bill-java-developer",
+      "source": "./plugins/bill-java-developer",
       "description": "Senior Java/Spring Boot developer with expertise in JPA, database optimization, and enterprise architecture"
     }
   ]

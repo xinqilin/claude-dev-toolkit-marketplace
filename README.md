@@ -6,12 +6,12 @@
 
 ### 3 個獨立 Plugins
 
-#### 1. Java Unit Test Reviewer
+#### 1. bill-billing-unit-test-reviewer
 專注於單元測試審查與最佳實踐
 - **Agent**: bill-billing-unit-test-reviewer
 - **專長**: TDD、測試設計、覆蓋率分析、避免過度設計
 
-#### 2. Java Code Reviewer
+#### 2. bill-code-reviewer
 程式碼品質審查與重構建議
 - **Agent**: bill-code-reviewer
 - **Commands**:
@@ -20,7 +20,7 @@
   - `/review-architecture` - 架構設計審查
 - **專長**: Clean Code、Design Patterns、重構技巧
 
-#### 3. Java Spring Developer
+#### 3. bill-java-developer
 Spring Boot 開發與資料庫優化專家
 - **Agent**: bill-java-developer
 - **Commands**:
@@ -32,47 +32,50 @@ Spring Boot 開發與資料庫優化專家
 
 你可以選擇安裝全部 3 個 plugins，或只安裝你需要的。
 
-### 方法 1: 從 GitHub 安裝（推薦）
+### 步驟 1: 加入 Marketplace
 
-#### 安裝全部 3 個 plugins
-
-```bash
-# 使用 SSH（推薦，如已設定 GitHub SSH Key）
-claude code plugin add xinqilin/claude-dev-toolkit-marketplace
-
-# 或使用 Personal Access Token
-claude code plugin add xinqilin/claude-dev-toolkit-marketplace --token YOUR_GITHUB_TOKEN
+**從 GitHub 安裝（推薦）**：
+```
+/plugin marketplace add xinqilin/claude-dev-toolkit-marketplace
 ```
 
-安裝 marketplace 後，Claude Code 會提示你選擇要安裝哪些 plugins：
-- ☑ java-unit-test-reviewer
-- ☑ java-code-reviewer
-- ☑ java-spring-developer
+**從本地安裝**：
+```
+/plugin marketplace add /path/to/project-claude-code-plugins
+```
 
-你可以全選，或只選擇你需要的。
+### 步驟 2: 安裝 Plugins
 
-#### 建立 GitHub Personal Access Token
+選擇你需要的 plugins 進行安裝：
 
-如果使用 token 安裝：
-1. 前往 [GitHub Settings](https://github.com/settings/tokens) → Personal access tokens → Tokens (classic)
-2. 點擊 "Generate new token (classic)"
-3. 勾選 `repo` 權限
-4. 產生並複製 token
+**安裝全部 3 個 plugins**：
+```
+/plugin install bill-billing-unit-test-reviewer
+/plugin install bill-code-reviewer
+/plugin install bill-java-developer
+```
 
-### 方法 2: 本地開發安裝
+**或只安裝你需要的**：
+```
+# 只安裝測試審查
+/plugin install bill-billing-unit-test-reviewer
 
-```bash
-claude code plugin add /path/to/project-claude-code-plugins
+# 只安裝程式碼審查
+/plugin install bill-code-reviewer
+
+# 只安裝 Spring Boot 開發工具
+/plugin install bill-java-developer
 ```
 
 ### 驗證安裝
 
-```bash
+安裝完成後，你可以透過以下指令確認：
+```
 # 查看已安裝的 plugins
-claude code plugin list
+/plugin list
 
 # 查看可用的 commands
-claude code help
+/help
 ```
 
 ## 快速開始
@@ -183,7 +186,7 @@ Agent 會自動識別你的需求並提供專業建議。你也可以在對話�
 
 ## Plugins 詳細說明
 
-### 1. Java Unit Test Reviewer
+### 1. bill-billing-unit-test-reviewer
 
 **獨立安裝**: 如果你只需要測試審查功能
 
@@ -196,7 +199,7 @@ Agent 會自動識別你的需求並提供專業建議。你也可以在對話�
 
 **適用場景**: 測試程式碼審查、TDD 實踐、測試重構
 
-### 2. Java Code Reviewer
+### 2. bill-code-reviewer
 
 **獨立安裝**: 如果你主要需要程式碼品質審查
 
@@ -209,7 +212,7 @@ Agent 會自動識別你的需求並提供專業建議。你也可以在對話�
 
 **適用場景**: Code Review、重構建議、架構評估
 
-### 3. Java Spring Developer
+### 3. bill-java-developer
 
 **獨立安裝**: 如果你主要需要開發與效能優化
 
@@ -229,13 +232,13 @@ project-claude-code-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json              # Marketplace 定義
 └── plugins/
-    ├── java-unit-test-reviewer/      # Plugin 1: 單元測試審查
+    ├── bill-billing-unit-test-reviewer/      # Plugin 1: 單元測試審查
     │   ├── .claude-plugin/
     │   │   └── plugin.json
     │   └── agents/
     │       └── bill-billing-unit-test-reviewer.md
     │
-    ├── java-code-reviewer/           # Plugin 2: 程式碼審查
+    ├── bill-code-reviewer/           # Plugin 2: 程式碼審查
     │   ├── .claude-plugin/
     │   │   └── plugin.json
     │   ├── agents/
@@ -245,7 +248,7 @@ project-claude-code-plugins/
     │       ├── refactor-suggestion.md
     │       └── review-architecture.md
     │
-    └── java-spring-developer/        # Plugin 3: Spring Boot 開發
+    └── bill-java-developer/        # Plugin 3: Spring Boot 開發
         ├── .claude-plugin/
         │   └── plugin.json
         ├── agents/
@@ -259,9 +262,9 @@ project-claude-code-plugins/
 
 ### 模組化設計
 3 個獨立 plugins，按需安裝：
-- **只需要測試審查？** 安裝 java-unit-test-reviewer
-- **只需要程式碼審查？** 安裝 java-code-reviewer
-- **只需要開發優化？** 安裝 java-spring-developer
+- **只需要測試審查？** 安裝 bill-billing-unit-test-reviewer
+- **只需要程式碼審查？** 安裝 bill-code-reviewer
+- **只需要開發優化？** 安裝 bill-java-developer
 - **需要全套工具？** 一次安裝全部
 
 ### 專業深度
