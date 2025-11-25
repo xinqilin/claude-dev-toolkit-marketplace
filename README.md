@@ -1,54 +1,65 @@
 # Bill Lin Dev Toolkit
 
+企業級 Java/Spring Boot 開發工具包，提供 3 個獨立的專業 plugins，可按需安裝。
+
 ## 快速概覽
 
-### 3 個專特化的 Agents
-- **bill-java-developer**: 資深 Java 架構師 (15+ 年經驗)
-- **bill-code-reviewer**: 高級程式碼審查員 
-- **bill-billing-unit-test-reviewer**: 單元測試審查專家
+### 3 個獨立 Plugins
 
-### 實用 Commands
-- `/analyze-code` - 全面程式碼分析
-- `/optimize-query` - SQL/JPA 優化
-- `/review-architecture` - 架構設計審查
-- `/refactor-suggestion` - 重構建議
-- `/mysql-performance` - MySQL 性能優化
+#### 1. Java Unit Test Reviewer
+專注於單元測試審查與最佳實踐
+- **Agent**: bill-billing-unit-test-reviewer
+- **專長**: TDD、測試設計、覆蓋率分析、避免過度設計
+
+#### 2. Java Code Reviewer
+程式碼品質審查與重構建議
+- **Agent**: bill-code-reviewer
+- **Commands**:
+  - `/analyze-code` - 全面程式碼分析
+  - `/refactor-suggestion` - 重構建議
+  - `/review-architecture` - 架構設計審查
+- **專長**: Clean Code、Design Patterns、重構技巧
+
+#### 3. Java Spring Developer
+Spring Boot 開發與資料庫優化專家
+- **Agent**: bill-java-developer
+- **Commands**:
+  - `/optimize-query` - SQL/JPA 優化
+  - `/mysql-performance` - MySQL 性能優化
+- **專長**: Spring Boot、JPA、資料庫效能、企業架構
 
 ## 安裝
 
+你可以選擇安裝全部 3 個 plugins，或只安裝你需要的。
+
 ### 方法 1: 從 GitHub 安裝（推薦）
 
-#### Private Repository 安裝方式
-
-本 plugin 位於 private GitHub repository。你需要使用以下其中一種方式進行安裝：
-
-#### 選項 A: 使用 GitHub Personal Access Token
-
-1. 建立 GitHub Personal Access Token:
-   - 前往 [GitHub Settings](https://github.com/settings/tokens) → Developer settings → Personal access tokens → Tokens (classic)
-   - 點擊 "Generate new token (classic)"
-   - 勾選 `repo` 權限（完整的 repository 存取權限）
-   - 產生 token 並複製
-
-2. 使用 token 安裝 plugin:
+#### 安裝全部 3 個 plugins
 
 ```bash
+# 使用 SSH（推薦，如已設定 GitHub SSH Key）
+claude code plugin add xinqilin/claude-dev-toolkit-marketplace
+
+# 或使用 Personal Access Token
 claude code plugin add xinqilin/claude-dev-toolkit-marketplace --token YOUR_GITHUB_TOKEN
 ```
 
-#### 選項 B: 使用 SSH（如你已設定 GitHub SSH Key）
+安裝 marketplace 後，Claude Code 會提示你選擇要安裝哪些 plugins：
+- ☑ java-unit-test-reviewer
+- ☑ java-code-reviewer
+- ☑ java-spring-developer
 
-如果你的電腦已經設定好 GitHub SSH key，可以直接安裝：
+你可以全選，或只選擇你需要的。
 
-```bash
-claude code plugin add xinqilin/claude-dev-toolkit-marketplace
-```
+#### 建立 GitHub Personal Access Token
 
-Claude Code 會自動使用你的 SSH 認證。
+如果使用 token 安裝：
+1. 前往 [GitHub Settings](https://github.com/settings/tokens) → Personal access tokens → Tokens (classic)
+2. 點擊 "Generate new token (classic)"
+3. 勾選 `repo` 權限
+4. 產生並複製 token
 
 ### 方法 2: 本地開發安裝
-
-如果你想從本地目錄安裝（適用於開發或測試）：
 
 ```bash
 claude code plugin add /path/to/project-claude-code-plugins
@@ -56,56 +67,47 @@ claude code plugin add /path/to/project-claude-code-plugins
 
 ### 驗證安裝
 
-安裝完成後，執行以下指令確認：
-
 ```bash
+# 查看已安裝的 plugins
 claude code plugin list
-```
 
-你應該看到 `bill-lin-dev-toolkit` 出現在列表中。
-
-檢查可用的 commands：
-
-```bash
+# 查看可用的 commands
 claude code help
 ```
-
-你應該看到 5 個新的 commands。
 
 ## 快速開始
 
 ### 使用 Commands
 
-**分析程式碼**:
+#### Java Code Reviewer Plugin
 
+**分析程式碼**:
 ```text
 /analyze-code
 [貼上你的 Java 程式碼]
 ```
 
-**優化查詢**:
-
-```text
-/optimize-query
-[貼上你的 SQL 或 JPA 程式碼]
-```
-
 **架構審查**:
-
 ```text
 /review-architecture
 [描述你的系統設計]
 ```
 
 **重構建議**:
-
 ```text
 /refactor-suggestion
 [貼上需要重構的程式碼]
 ```
 
-**MySQL 性能優化**:
+#### Java Spring Developer Plugin
 
+**優化查詢**:
+```text
+/optimize-query
+[貼上你的 SQL 或 JPA 程式碼]
+```
+
+**MySQL 性能優化**:
 ```text
 /mysql-performance
 [貼上你的 SQL 查詢或 EXPLAIN 結果]
@@ -179,48 +181,99 @@ Agent 會自動識別你的需求並提供專業建議。你也可以在對話�
 2. 與 Unit Test Reviewer Agent 討論 - 測試設計審查
 3. 根據建議改進測試案例
 
-## 核心 Agents
+## Plugins 詳細說明
 
-### Java Developer Expert
+### 1. Java Unit Test Reviewer
 
-- 15+ 年生產環境經驗
-- Spring Boot、JPA、MySQL 優化專家
-- 系統設計、PCI DSS 合規
-- 提供完整的生產級程式碼方案
+**獨立安裝**: 如果你只需要測試審查功能
 
-### Code Reviewer Expert
-
-- Clean Code 原則專家
-- Refactoring 和 Design Pattern 精通
-- 性能分析和演算法優化
-- 務實平衡的程式碼品質評估
-
-### Unit Test Reviewer Expert
-
+專注於單元測試品質與最佳實踐：
 - TDD 測試驅動開發專家
 - 測試設計原則和最佳實踐
 - 測試責任分離與覆蓋率分析
 - 避免過度設計與虛構場景
+- 基於真實系統行為的測試策略
+
+**適用場景**: 測試程式碼審查、TDD 實踐、測試重構
+
+### 2. Java Code Reviewer
+
+**獨立安裝**: 如果你主要需要程式碼品質審查
+
+程式碼品質、架構設計與重構專家：
+- Clean Code 原則專家
+- Refactoring 和 Design Pattern 精通
+- 性能分析和演算法優化
+- 務實平衡的程式碼品質評估
+- 架構設計與系統可維護性
+
+**適用場景**: Code Review、重構建議、架構評估
+
+### 3. Java Spring Developer
+
+**獨立安裝**: 如果你主要需要開發與效能優化
+
+Spring Boot 開發與資料庫優化專家：
+- 15+ 年生產環境經驗
+- Spring Boot、JPA、Hibernate 精通
+- MySQL 查詢優化與索引策略
+- 系統設計、分散式系統
+- 提供完整的生產級程式碼方案
+
+**適用場景**: Spring Boot 開發、資料庫效能優化、系統設計
 
 ## 目錄結構
 
 ```plaintext
 project-claude-code-plugins/
 ├── .claude-plugin/
-│   └── plugin.json
-├── agents/
-│   ├── bill-java-developer.md
-│   ├── bill-code-reviewer.md
-│   └── bill-billing-unit-test-reviewer.md
-├── commands/
-│   ├── analyze-code.md
-│   ├── optimize-query.md
-│   ├── review-architecture.md
-│   ├── refactor-suggestion.md
-│   └── mysql-performance.md
-├── LICENSE
-└── README.md
+│   └── marketplace.json              # Marketplace 定義
+└── plugins/
+    ├── java-unit-test-reviewer/      # Plugin 1: 單元測試審查
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   └── agents/
+    │       └── bill-billing-unit-test-reviewer.md
+    │
+    ├── java-code-reviewer/           # Plugin 2: 程式碼審查
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── agents/
+    │   │   └── bill-code-reviewer.md
+    │   └── commands/
+    │       ├── analyze-code.md
+    │       ├── refactor-suggestion.md
+    │       └── review-architecture.md
+    │
+    └── java-spring-developer/        # Plugin 3: Spring Boot 開發
+        ├── .claude-plugin/
+        │   └── plugin.json
+        ├── agents/
+        │   └── bill-java-developer.md
+        └── commands/
+            ├── mysql-performance.md
+            └── optimize-query.md
 ```
+
+## 為什麼選擇這個 Marketplace？
+
+### 模組化設計
+3 個獨立 plugins，按需安裝：
+- **只需要測試審查？** 安裝 java-unit-test-reviewer
+- **只需要程式碼審查？** 安裝 java-code-reviewer
+- **只需要開發優化？** 安裝 java-spring-developer
+- **需要全套工具？** 一次安裝全部
+
+### 專業深度
+每個 plugin 都由資深專家設計：
+- 15+ 年企業級開發經驗
+- 真實生產環境最佳實踐
+- 務實、可執行的建議
+
+### 持續更新
+- 定期更新最新的開發實踐
+- 根據社群回饋改進
+- 支援最新的 Java/Spring Boot 版本
 
 ## 最佳實踐
 
