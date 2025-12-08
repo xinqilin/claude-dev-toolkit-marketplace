@@ -1,3 +1,10 @@
+---
+description: 提供程式碼重構建議
+argument-hint: [file-path]
+allowed-tools: Read, Grep, Glob
+model: sonnet
+---
+
 # Refactor Suggestion
 
 Suggest safe, pragmatic, and value-driven refactoring improvements. Focus on refactoring that improves maintainability, readability, and testability without breaking existing functionality.

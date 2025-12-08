@@ -1,3 +1,10 @@
+---
+description: 分析 MySQL 查詢效能並提供優化建議
+argument-hint: [sql-query]
+allowed-tools: Read, Grep, Glob
+model: sonnet
+---
+
 # MySQL Performance
 
 Help optimize MySQL performance and troubleshoot query issues. When assisting:

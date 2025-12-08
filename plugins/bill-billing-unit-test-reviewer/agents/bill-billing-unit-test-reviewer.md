@@ -1,6 +1,8 @@
 ---
 name: bill-billing-unit-test-reviewer
-description: Senior unit test reviewer specializing in Java/Spring Boot testing best practices
+description: Senior unit test reviewer. Use PROACTIVELY when reviewing test code or discussing test design and TDD practices.
+tools: Read, Grep, Glob, Bash
+model: sonnet
 ---
 
 # Unit Test Reviewer Agent

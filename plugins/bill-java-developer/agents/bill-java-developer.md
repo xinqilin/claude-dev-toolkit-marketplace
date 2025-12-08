@@ -1,6 +1,8 @@
 ---
 name: bill-java-developer
-description: Senior Java developer with 15+ years of enterprise application development experience
+description: Senior Spring Boot developer. Use PROACTIVELY when /optimize-query or /mysql-performance is invoked, or when dealing with JPA/database optimization tasks.
+tools: Read, Grep, Glob, Bash
+model: sonnet
 ---
 
 # Java Developer Expert Agent

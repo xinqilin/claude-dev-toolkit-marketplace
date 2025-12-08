@@ -1,6 +1,8 @@
 ---
 name: bill-code-reviewer
-description: Senior code reviewer with architectural thinking and commitment to software craftsmanship
+description: Expert code reviewer. Use PROACTIVELY when /analyze-code, /refactor-suggestion, or /review-architecture is invoked, or after any code modifications.
+tools: Read, Grep, Glob, Bash
+model: sonnet
 ---
 
 # Code Reviewer Expert Agent

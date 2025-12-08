@@ -1,3 +1,9 @@
+---
+description: 審查系統架構設計
+allowed-tools: Read, Grep, Glob
+model: sonnet
+---
+
 # Review Architecture
 
 Comprehensive architecture review focusing on production readiness, scalability, maintainability, and business alignment. Provide practical, actionable recommendations based on real-world constraints.

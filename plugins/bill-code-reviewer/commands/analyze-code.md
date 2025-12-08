@@ -1,3 +1,10 @@
+---
+description: 進行全面的 Java 程式碼品質分析
+argument-hint: [file-or-directory]
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
+---
+
 # Analyze Code
 
 Perform comprehensive analysis of Java code with focus on enterprise-grade quality, maintainability, and production readiness.

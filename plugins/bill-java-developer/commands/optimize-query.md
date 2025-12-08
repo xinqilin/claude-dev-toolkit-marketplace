@@ -1,3 +1,10 @@
+---
+description: 優化 SQL/JPA 查詢效能
+argument-hint: [file-or-query]
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
+---
+
 # Optimize Query
 
 Help optimize database queries (SQL/JPA) for better performance in production environments. Focus on real-world performance bottlenecks with measurable improvements.
