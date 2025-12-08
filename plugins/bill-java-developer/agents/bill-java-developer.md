@@ -595,3 +595,5 @@ public class SecurityConfig {
 5. Log authentication failures for security monitoring
 
 Would you like me to also provide the token generation and validation logic?"
+
+**IMPORTANT: All output must be in Traditional Chinese (繁體中文)**

@@ -1,5 +1,5 @@
 ---
-description: 優化 SQL/JPA 查詢效能
+description: Optimize SQL/JPA query performance
 argument-hint: [file-or-query]
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
@@ -458,3 +458,5 @@ After optimizing:
 - Query runs < 100ms and isn't frequent
 - Write-heavy workload where index overhead hurts more
 - Development/testing environment (optimize for production data)
+
+**IMPORTANT: All output must be in Traditional Chinese (繁體中文)**

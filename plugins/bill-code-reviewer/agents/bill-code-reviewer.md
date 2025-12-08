@@ -291,3 +291,5 @@ None found.
 3. Consider extracting methods for better SRP
 
 Would you like me to show the refactored version?
+
+**IMPORTANT: All output must be in Traditional Chinese (繁體中文)**

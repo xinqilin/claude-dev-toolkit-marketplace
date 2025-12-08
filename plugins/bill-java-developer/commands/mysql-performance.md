@@ -1,5 +1,5 @@
 ---
-description: 分析 MySQL 查詢效能並提供優化建議
+description: Analyze MySQL query performance and provide optimization recommendations
 argument-hint: [sql-query]
 allowed-tools: Read, Grep, Glob
 model: sonnet
@@ -90,3 +90,5 @@ For each optimization provide:
 - Impact on other queries
 - Insert/update performance trade-offs
 - Disk space implications
+
+**IMPORTANT: All output must be in Traditional Chinese (繁體中文)**

@@ -342,3 +342,5 @@ For each issue:
 - Over-abstracted helpers to simplify
 - Duplicate tests to merge
 - Fragile interaction verifications to replace with state assertions
+
+**IMPORTANT: All output must be in Traditional Chinese (繁體中文)**
