@@ -91,6 +91,10 @@ Spring Boot 開發與資料庫優化專家
 
 **審查 PR 變更**:
 ```text
+# 審查 GitHub PR（需要 gh CLI）
+/review-pr 123
+/review-pr #456
+
 # 審查當前 branch 對 master 的差異
 /review-pr
 
@@ -99,6 +103,15 @@ Spring Boot 開發與資料庫優化專家
 
 # 審查 feature-branch 對 develop 的差異
 /review-pr feature-branch develop
+```
+
+**注意**：審查 GitHub PR 需要安裝並認證 GitHub CLI (`gh`)：
+```bash
+# 安裝 gh CLI
+brew install gh
+
+# 認證
+gh auth login
 ```
 
 #### Java Spring Developer Plugin
