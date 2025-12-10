@@ -12,21 +12,21 @@
 - **專長**: TDD、測試設計、覆蓋率分析、避免過度設計
 
 #### 2. bill-code-reviewer
-程式碼品質審查與重構建議
+程式碼品質審查與 PR Review
 - **Agent**: bill-code-reviewer
 - **Commands**:
-  - `/analyze-code` - 全面程式碼分析
-  - `/refactor-suggestion` - 重構建議
-  - `/review-architecture` - 架構設計審查
-- **專長**: Clean Code、Design Patterns、重構技巧
+  - `/code-review` - 程式碼品質審查（Clean Code + 避免過度設計）
+  - `/review-pr` - PR 變更審查（branch 差異分析）
+- **專長**: Clean Code、避免過度設計、架構評估、PR Review
 
 #### 3. bill-java-developer
 Spring Boot 開發與資料庫優化專家
 - **Agent**: bill-java-developer
 - **Commands**:
+  - `/design-solution` - 技術方案設計與建議
   - `/optimize-query` - SQL/JPA 優化
   - `/mysql-performance` - MySQL 性能優化
-- **專長**: Spring Boot、JPA、資料庫效能、企業架構
+- **專長**: Spring Boot、JPA、資料庫效能、企業架構、技術方案設計
 
 ## 安裝
 
@@ -84,25 +84,30 @@ Spring Boot 開發與資料庫優化專家
 
 #### Java Code Reviewer Plugin
 
-**分析程式碼**:
+**審查程式碼品質**:
 ```text
-/analyze-code
-[貼上你的 Java 程式碼]
+/code-review src/main/java/com/example/OrderService.java
 ```
 
-**架構審查**:
+**審查 PR 變更**:
 ```text
-/review-architecture
-[描述你的系統設計]
-```
+# 審查當前 branch 對 master 的差異
+/review-pr
 
-**重構建議**:
-```text
-/refactor-suggestion
-[貼上需要重構的程式碼]
+# 審查 feature-branch 對 master 的差異
+/review-pr feature-branch
+
+# 審查 feature-branch 對 develop 的差異
+/review-pr feature-branch develop
 ```
 
 #### Java Spring Developer Plugin
+
+**技術方案設計**:
+```text
+/design-solution
+[描述你的需求或問題]
+```
 
 **優化查詢**:
 ```text
@@ -244,9 +249,8 @@ project-claude-code-plugins/
     │   ├── agents/
     │   │   └── bill-code-reviewer.md
     │   └── commands/
-    │       ├── analyze-code.md
-    │       ├── refactor-suggestion.md
-    │       └── review-architecture.md
+    │       ├── code-review.md
+    │       └── review-pr.md
     │
     └── bill-java-developer/        # Plugin 3: Spring Boot 開發
         ├── .claude-plugin/
@@ -254,6 +258,7 @@ project-claude-code-plugins/
         ├── agents/
         │   └── bill-java-developer.md
         └── commands/
+            ├── design-solution.md
             ├── mysql-performance.md
             └── optimize-query.md
 ```
