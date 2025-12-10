@@ -1,6 +1,6 @@
 ---
 description: Review pull request changes between branches or GitHub PRs with senior developer standards
-argument-hint: [compare-branch-or-pr-number] [base-branch]
+argument-hint: "[compare-branch-or-pr-number] [base-branch]"
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
