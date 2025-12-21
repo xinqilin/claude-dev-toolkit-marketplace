@@ -18,6 +18,11 @@
       "name": "bill-java-developer",
       "source": "./plugins/bill-java-developer",
       "description": "Senior Java/Spring Boot developer with expertise in JPA, database optimization, and enterprise architecture"
+    },
+    {
+      "name": "bill-java-skills",
+      "source": "./plugins/bill-java-skills",
+      "description": "Java best practices skills: Clean Architecture, Effective Java, MySQL optimization"
     }
   ]
 }

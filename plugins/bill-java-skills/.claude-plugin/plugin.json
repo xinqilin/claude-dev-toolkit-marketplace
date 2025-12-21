@@ -1,0 +1,13 @@
+{
+  "name": "bill-java-skills",
+  "version": "1.0.0",
+  "description": "Java development best practices: Clean Architecture, Effective Java, MySQL optimization",
+  "author": {
+    "name": "bill.lin"
+  },
+  "homepage": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
+  "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
+  "license": "MIT",
+  "keywords": ["java", "clean-architecture", "effective-java", "mysql", "spring-boot", "jpa", "hibernate", "best-practices"],
+  "skills": "./skills/"
+}

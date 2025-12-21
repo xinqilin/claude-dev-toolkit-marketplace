@@ -1,10 +1,10 @@
 # Bill Lin Dev Toolkit
 
-企業級 Java/Spring Boot 開發工具包，提供 3 個獨立的專業 plugins，可按需安裝。
+企業級 Java/Spring Boot 開發工具包，提供 4 個獨立的專業 plugins，可按需安裝。
 
 ## 快速概覽
 
-### 3 個獨立 Plugins
+### 4 個獨立 Plugins
 
 #### 1. bill-billing-unit-test-reviewer
 專注於單元測試審查與最佳實踐
@@ -28,9 +28,22 @@ Spring Boot 開發與資料庫優化專家
   - `/mysql-performance` - MySQL 性能優化
 - **專長**: Spring Boot、JPA、資料庫效能、企業架構、技術方案設計
 
+#### 4. bill-java-skills (NEW)
+Java 開發最佳實踐知識庫
+- **Skills** (自動觸發，無需手動調用):
+  - `clean-architecture` - Clean Architecture 設計原則
+  - `effective-java` - Effective Java 最佳實踐
+  - `mysql-optimization` - MySQL 效能優化與 JPA 調校
+- **用途**: Code Review 和設計方案時自動應用這些原則
+
+> **Skills vs Commands/Agents 的區別**:
+> - **Commands** (`/xxx`): 需要手動調用
+> - **Agents**: 根據對話自動啟動，提供互動式協助
+> - **Skills**: 知識庫，Claude 會根據情境自動參考並應用
+
 ## 安裝
 
-你可以選擇安裝全部 3 個 plugins，或只安裝你需要的。
+你可以選擇安裝全部 4 個 plugins，或只安裝你需要的。
 
 ### 步驟 1: 加入 Marketplace
 
@@ -48,11 +61,12 @@ Spring Boot 開發與資料庫優化專家
 
 選擇你需要的 plugins 進行安裝：
 
-**安裝全部 3 個 plugins**：
+**安裝全部 4 個 plugins**：
 ```
 /plugin install bill-billing-unit-test-reviewer
 /plugin install bill-code-reviewer
 /plugin install bill-java-developer
+/plugin install bill-java-skills
 ```
 
 **或只安裝你需要的**：
@@ -65,6 +79,9 @@ Spring Boot 開發與資料庫優化專家
 
 # 只安裝 Spring Boot 開發工具
 /plugin install bill-java-developer
+
+# 只安裝 Java 最佳實踐 Skills（推薦搭配上述任一 plugin）
+/plugin install bill-java-skills
 ```
 
 ### 驗證安裝
@@ -243,6 +260,42 @@ Spring Boot 開發與資料庫優化專家：
 
 **適用場景**: Spring Boot 開發、資料庫效能優化、系統設計
 
+### 4. bill-java-skills
+
+**獨立安裝**: 如果你想要 Java 最佳實踐的自動化指導
+
+Java 開發最佳實踐知識庫，包含 3 個 Skills：
+
+#### clean-architecture
+- Clean Architecture / Hexagonal Architecture 設計原則
+- 分層依賴規則與違規檢測
+- Spring Boot 專案結構範本
+- 分層測試策略
+
+**觸發條件**: 討論架構設計、分層結構、依賴規則時自動應用
+
+#### effective-java
+- Joshua Bloch's Effective Java 最佳實踐
+- 物件創建（Static Factory、Builder Pattern）
+- 類別設計（不可變性、組合優於繼承）
+- Stream API 和並發程式設計
+
+**觸發條件**: 審查 Java 程式碼品質、討論設計模式時自動應用
+
+#### mysql-optimization
+- 索引設計原則（複合索引、覆蓋索引）
+- 查詢優化 Patterns（N+1、分頁優化）
+- JPA/Hibernate 效能調校
+- EXPLAIN 分析指南
+
+**觸發條件**: 討論資料庫效能、N+1 問題、JPA 優化時自動應用
+
+**適用場景**: 搭配其他 plugins 使用，自動提升 Code Review 和設計方案的品質
+
+> **Skills 的運作方式**:
+> Skills 不需要手動調用。當對話涉及相關主題時，Claude 會自動載入 SKILL.md 中的核心原則。
+> 如需更詳細的資訊，Claude 會自動參考 `references/` 目錄中的詳細文檔。
+
 ## 目錄結構
 
 ```plaintext
@@ -265,24 +318,49 @@ project-claude-code-plugins/
     │       ├── code-review.md
     │       └── review-pr.md
     │
-    └── bill-java-developer/        # Plugin 3: Spring Boot 開發
+    ├── bill-java-developer/          # Plugin 3: Spring Boot 開發
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── agents/
+    │   │   └── bill-java-developer.md
+    │   └── commands/
+    │       ├── design-solution.md
+    │       ├── mysql-performance.md
+    │       └── optimize-query.md
+    │
+    └── bill-java-skills/             # Plugin 4: Java 最佳實踐 Skills
         ├── .claude-plugin/
         │   └── plugin.json
-        ├── agents/
-        │   └── bill-java-developer.md
-        └── commands/
-            ├── design-solution.md
-            ├── mysql-performance.md
-            └── optimize-query.md
+        └── skills/
+            ├── clean-architecture/
+            │   ├── SKILL.md                    # 核心原則
+            │   └── references/                 # 詳細參考文檔
+            │       ├── layer-dependencies.md
+            │       ├── spring-boot-implementation.md
+            │       └── testing-strategy.md
+            ├── effective-java/
+            │   ├── SKILL.md
+            │   └── references/
+            │       ├── object-creation.md
+            │       ├── classes-and-interfaces.md
+            │       ├── lambdas-streams.md
+            │       └── concurrency.md
+            └── mysql-optimization/
+                ├── SKILL.md
+                └── references/
+                    ├── index-design.md
+                    ├── query-patterns.md
+                    └── jpa-hibernate-tuning.md
 ```
 
 ## 為什麼選擇這個 Marketplace？
 
 ### 模組化設計
-3 個獨立 plugins，按需安裝：
+4 個獨立 plugins，按需安裝：
 - **只需要測試審查？** 安裝 bill-billing-unit-test-reviewer
 - **只需要程式碼審查？** 安裝 bill-code-reviewer
 - **只需要開發優化？** 安裝 bill-java-developer
+- **需要最佳實踐指導？** 安裝 bill-java-skills
 - **需要全套工具？** 一次安裝全部
 
 ### 專業深度
