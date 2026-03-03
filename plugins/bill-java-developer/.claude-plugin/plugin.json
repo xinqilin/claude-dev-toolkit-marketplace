@@ -1,6 +1,6 @@
 {
   "name": "bill-java-developer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Senior Java/Spring Boot developer with expertise in JPA, database optimization, and enterprise architecture",
   "author": {
     "name": "bill.lin"
@@ -9,5 +9,6 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["java", "spring-boot", "jpa", "database", "performance", "enterprise", "mysql", "optimization", "hibernate"],
-  "agents": "./agents/bill-java-developer.md"
+  "agents": "./agents/bill-java-developer.md",
+  "skills": "./skills/"
 }

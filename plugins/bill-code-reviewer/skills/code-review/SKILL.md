@@ -1,4 +1,5 @@
 ---
+name: code-review
 description: Senior Java code review with Clean Code principles and no over-design
 argument-hint: [file-or-directory]
 allowed-tools: Read, Grep, Glob, Bash

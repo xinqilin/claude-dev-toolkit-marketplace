@@ -1,4 +1,5 @@
 ---
+name: design-solution
 description: Senior Spring Boot developer analyzes requirements and provides technical advice with Todo List
 argument-hint: [requirement-description]
 allowed-tools: Read, Grep, Glob, Bash

@@ -1,6 +1,6 @@
 {
   "name": "bill-billing-unit-test-reviewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Senior unit test reviewer specializing in Java/Spring Boot testing best practices",
   "author": {
     "name": "bill.lin"
@@ -9,5 +9,6 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["java", "unit-test", "testing", "junit", "spring-boot-test", "tdd", "test-review"],
-  "agents": "./agents/bill-billing-unit-test-reviewer.md"
+  "agents": "./agents/bill-billing-unit-test-reviewer.md",
+  "skills": "./skills/"
 }

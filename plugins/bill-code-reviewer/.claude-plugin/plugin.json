@@ -1,6 +1,6 @@
 {
   "name": "bill-code-reviewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Expert code reviewer focusing on clean code, design patterns, and Java best practices",
   "author": {
     "name": "bill.lin"
@@ -9,5 +9,6 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["code-review", "clean-code", "refactoring", "design-patterns", "java", "architecture", "best-practices"],
-  "agents": "./agents/bill-code-reviewer.md"
+  "agents": "./agents/bill-code-reviewer.md",
+  "skills": "./skills/"
 }

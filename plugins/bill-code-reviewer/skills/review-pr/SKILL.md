@@ -1,4 +1,5 @@
 ---
+name: review-pr
 description: Review pull request changes between branches or GitHub PRs with senior developer standards
 argument-hint: "[compare-branch-or-pr-number] [base-branch]"
 allowed-tools: Read, Grep, Glob, Bash
@@ -218,7 +219,7 @@ if [[ "$MODE" == "git_diff" ]]; then
                 PR_TITLE=$(echo "$PR_INFO" | jq -r '.[0].title')
                 if [[ "$PR_NUM" != "null" ]]; then
                     echo ""
-                    echo "✓ 找到對應的 PR #$PR_NUM: $PR_TITLE"
+                    echo "找到對應的 PR #$PR_NUM: $PR_TITLE"
                     echo ""
                     echo "建議使用以下指令審查："
                     echo "  /review-pr $PR_NUM"
@@ -296,7 +297,7 @@ Review commit messages and commit structure:
 
 ## Step 3: Code Quality Review
 
-**IMPORTANT**: Reuse the review principles from `code-review.md`. Do NOT repeat the full checklist here.
+**IMPORTANT**: Reuse the review principles from `code-review` skill. Do NOT repeat the full checklist here.
 
 For each changed code block, check:
 1. Naming and Readability
@@ -305,8 +306,6 @@ For each changed code block, check:
 4. Exception Handling
 5. Spring Boot Best Practices
 6. Performance Considerations
-
-Refer to `/code-review` command's detailed guidelines for these areas.
 
 ## Step 4: PR-Specific Checks
 
@@ -319,7 +318,7 @@ These checks are unique to PR review (not in regular code review):
 
 **Look for**:
 - Test files matching the changed source files
-- Example: `OrderService.java` → should have `OrderServiceTest.java`
+- Example: `OrderService.java` should have `OrderServiceTest.java`
 
 ### 4.2 Breaking Changes
 Check if changes might break existing functionality:
@@ -359,7 +358,6 @@ git diff "$BASE..$COMPARE" | grep -E "System.out.println|TODO|FIXME|XXX"
 
 ## 變更概覽
 
-<!-- For gh mode: Display PR information -->
 **PR 資訊** (僅 gh mode):
 - **PR 編號**: #[PR number]
 - **標題**: [PR title]
@@ -368,41 +366,11 @@ git diff "$BASE..$COMPARE" | grep -E "System.out.println|TODO|FIXME|XXX"
 - **Base Branch**: [base branch]
 - **Head Branch**: [head branch]
 
-<!-- For both modes: Display change statistics -->
 **變更統計**:
 - **變更檔案數量**: [total files] 個檔案
 - **新增**: +[lines added] 行
 - **刪除**: -[lines deleted] 行
 - **主要變更類型**: Feature / BugFix / Refactor / Other
-
-<!-- For gh mode: Display CI/CD status -->
-**CI/CD 檢查** (僅 gh mode):
-```bash
-# Parse CI status from PR JSON
-if [[ "$MODE" == "gh_pr" ]] && command -v jq &> /dev/null; then
-    CI_CHECKS=$(echo "$PR_JSON" | jq -r '.statusCheckRollup[]? |
-        "\(.name): \(.conclusion // .status)"' 2>/dev/null)
-
-    if [[ -n "$CI_CHECKS" ]]; then
-        echo "**CI/CD 檢查**:"
-        while IFS= read -r check; do
-            if [[ -z "$check" ]]; then continue; fi
-            CHECK_NAME=$(echo "$check" | cut -d: -f1)
-            CHECK_STATUS=$(echo "$check" | cut -d: -f2 | xargs)
-
-            case "$CHECK_STATUS" in
-                SUCCESS) echo "- ✅ $CHECK_NAME (passing)" ;;
-                FAILURE) echo "- ❌ $CHECK_NAME (failing)" ;;
-                PENDING|IN_PROGRESS|QUEUED) echo "- ⏳ $CHECK_NAME (pending)" ;;
-                SKIPPED) echo "- ⊘ $CHECK_NAME (skipped)" ;;
-                *) echo "- ⚠️ $CHECK_NAME ($CHECK_STATUS)" ;;
-            esac
-        done <<< "$CI_CHECKS"
-    else
-        echo "**CI/CD 檢查**: 無檢查或資訊不可用"
-    fi
-fi
-```
 
 ## Commit 歷史分析
 
@@ -442,20 +410,10 @@ fi
 |------|------|------|----------|
 | [issue description] | [file:line] | [impact] | [fix suggestion] |
 
-### 刪除檔案 ([count] 個)
-
-| 檔案 | 說明 |
-|------|------|
-| [filename] | [reason for deletion assessment] |
-
 ## PR 特定檢查
 
 ### 測試覆蓋
 - [ ] **[狀態]** - [說明]
-
-**範例**:
-- [ ] **缺少單元測試** - OrderService 沒有對應的測試檔案
-- [x] **測試已覆蓋** - Controller 有完整的測試
 
 ### 文件更新
 - [x] README 已更新
@@ -464,27 +422,16 @@ fi
 ### Breaking Changes
 - [ ] **無 Breaking Changes**
 
-或
-
-- [ ] **發現 Breaking Change** - [具體說明影響範圍]
-
 ### Debug/TODO Code
 - [x] 沒有遺留的 debug code
-- [ ] **發現 [count] 處 TODO comments** - [列出位置]
-
-### 其他發現
-- [x] 沒有無關的檔案變更
-- [ ] **發現問題** - [說明]
 
 ## 整體建議
 
 ### 建議合併前修正 (Priority 1)
 1. [必須修正的問題]
-2. [必須修正的問題]
 
 ### 建議後續改進 (Priority 2)
 1. [建議改進的項目]
-2. [建議改進的項目]
 
 ## 總結評估
 
@@ -502,69 +449,24 @@ fi
 
 ## Error Handling
 
-Handle these scenarios gracefully:
-
 ### Git Diff Mode Errors
 
-1. **Branch doesn't exist**:
-   - Show clear error message
-   - List available branches for reference
-   - **Fallback**: Attempt to find corresponding PR on GitHub using `gh pr list --head`
-
-2. **No differences between branches**:
-   - Message: "沒有發現任何差異。[compare] 和 [base] 兩個 branch 的程式碼相同。"
-
-3. **Not in git repository**:
-   - Message: "錯誤：此指令必須在 git repository 中執行。"
-
-4. **Merge conflicts exist**:
-   - Warn user about unresolved conflicts
-   - Message: "警告：發現未解決的 merge conflicts。建議先解決衝突後再進行 review。"
+1. **Branch doesn't exist**: Show clear error message, list available branches, fallback to gh
+2. **No differences**: Message: "沒有發現任何差異。[compare] 和 [base] 兩個 branch 的程式碼相同。"
+3. **Not in git repository**: Message: "錯誤：此指令必須在 git repository 中執行。"
 
 ### GitHub PR Mode Errors
 
-1. **gh CLI not installed**:
-   - Message: "錯誤：GitHub CLI (gh) 未安裝"
-   - Provide installation instructions: `brew install gh`
-   - Link: https://cli.github.com/
-
-2. **gh CLI not authenticated**:
-   - Message: "錯誤：GitHub CLI 尚未認證"
-   - Provide authentication instructions: `gh auth login`
-
-3. **PR doesn't exist**:
-   - Message: "錯誤：無法取得 PR #[number] 的資訊"
-   - Check: PR number is correct, user has access, in correct repository
-
-4. **jq not installed** (warning, not error):
-   - Message: "警告：jq 未安裝，將使用簡化的 JSON 解析"
-   - Recommendation: Install jq for better experience: `brew install jq`
-   - Fallback: Use grep-based JSON parsing
-
-5. **Network issues**:
-   - Message: Show the actual error from gh command
-   - No fallback available (gh requires network)
+1. **gh CLI not installed**: Provide installation instructions: `brew install gh`
+2. **gh CLI not authenticated**: Provide: `gh auth login`
+3. **PR doesn't exist**: Check PR number, access, repository
+4. **jq not installed**: Warning, fallback to grep-based parsing
 
 ## Review Principles
 
-Remember:
 1. **Focus on changes**: Review what changed, not the entire codebase
 2. **Use Clean Code standards**: Apply the same standards as `/code-review`
 3. **PR-specific concerns**: Test coverage, breaking changes, commit quality
 4. **Be constructive**: Provide clear, actionable feedback
 5. **Prioritize issues**: Distinguish between "must fix" and "nice to have"
 6. **Avoid over-design**: Check if changes are unnecessarily complex
-
-## Integration with /code-review
-
-This command (`/review-pr`) focuses on:
-- **Identifying what changed** (git diff, commits)
-- **PR-specific checks** (tests, breaking changes, docs)
-- **Change impact analysis**
-
-The core code quality review still follows the principles in `/code-review`:
-- Clean Code principles
-- Avoiding over-design
-- Spring Boot best practices
-
-**Don't duplicate the full checklist** - refer to `/code-review` for detailed coding standards.

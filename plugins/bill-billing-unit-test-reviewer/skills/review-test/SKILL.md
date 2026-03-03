@@ -1,4 +1,5 @@
 ---
+name: review-test
 description: Review team members' unit test code for quality and best practices
 argument-hint: [test-file-or-directory]
 allowed-tools: Read, Grep, Glob

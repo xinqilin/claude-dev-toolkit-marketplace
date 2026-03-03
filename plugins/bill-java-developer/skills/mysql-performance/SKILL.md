@@ -1,4 +1,5 @@
 ---
+name: mysql-performance
 description: Analyze MySQL query performance and provide optimization recommendations
 argument-hint: [sql-query]
 allowed-tools: Read, Grep, Glob

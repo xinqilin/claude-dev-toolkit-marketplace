@@ -1,4 +1,5 @@
 ---
+name: optimize-query
 description: Optimize SQL/JPA query performance
 argument-hint: [file-or-query]
 allowed-tools: Read, Grep, Glob, Bash
@@ -262,51 +263,6 @@ public class Order {
 
 **Trade-off**: Faster reads, slower writes, data duplication
 
-#### Database-Specific Optimizations
-
-MySQL:
-```sql
--- InnoDB buffer pool sizing
-SET GLOBAL innodb_buffer_pool_size = 4G;
-
--- Query cache (MySQL 5.7 and earlier)
-SET GLOBAL query_cache_size = 256M;
-SET GLOBAL query_cache_type = 1;
-```
-
-PostgreSQL:
-```sql
--- Shared buffers
-shared_buffers = 4GB
-
--- Work memory for sorts
-work_mem = 64MB
-```
-
-#### Materialized Views
-
-```sql
--- Expensive aggregation query
-SELECT
-    customer_id,
-    COUNT(*) as order_count,
-    SUM(total_amount) as total_spent
-FROM orders
-GROUP BY customer_id;
-
--- Create materialized view
-CREATE MATERIALIZED VIEW customer_stats AS
-SELECT
-    customer_id,
-    COUNT(*) as order_count,
-    SUM(total_amount) as total_spent
-FROM orders
-GROUP BY customer_id;
-
--- Refresh periodically
-REFRESH MATERIALIZED VIEW customer_stats;
-```
-
 ## Output Format
 
 For each optimization, provide:
@@ -355,11 +311,6 @@ public class Order {
 Execution Time: 3.5s → 45ms (98.7% faster)
 Rows Examined: 5,000,000 → 150 (99.997% reduction)
 Index Used: idx_orders_customer_id
-
-EXPLAIN output after:
-type: ref
-key: idx_orders_customer_id
-rows: 150
 ```
 
 ### 5. Verification Steps
@@ -382,17 +333,6 @@ SHOW INDEX FROM orders;
 - Additional disk space: ~50MB for this index
 - INSERT/UPDATE performance: ~10% slower (extra index maintenance)
 - Worth it if reads >> writes (typical OLTP pattern)
-
-**Monitoring**:
-```sql
--- Check index usage over time
-SELECT
-    index_name,
-    rows_read,
-    rows_read / (SELECT SUM(rows_read) FROM sys.schema_index_statistics) * 100 as usage_pct
-FROM sys.schema_index_statistics
-WHERE table_name = 'orders';
-```
 
 ## Common Query Anti-Patterns
 
