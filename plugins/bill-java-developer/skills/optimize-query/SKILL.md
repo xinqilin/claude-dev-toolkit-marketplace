@@ -4,6 +4,7 @@ description: Optimize SQL/JPA query performance
 argument-hint: [file-or-query]
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
+context: fork
 ---
 
 # Optimize Query

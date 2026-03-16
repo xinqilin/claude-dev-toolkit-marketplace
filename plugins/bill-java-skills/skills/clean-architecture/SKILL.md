@@ -1,6 +1,9 @@
 ---
 name: clean-architecture
 description: Clean Architecture design guide for Spring Boot. Use when reviewing code architecture, designing solutions, discussing layer separation, dependency rules, or project structure. Applies Uncle Bob's Clean Architecture principles.
+user-invocable: false
+allowed-tools: Read, Grep, Glob
+model: sonnet
 ---
 
 # Clean Architecture for Spring Boot

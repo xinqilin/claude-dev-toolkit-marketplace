@@ -20,28 +20,27 @@
 
 程式碼品質審查與 PR Review
 
-- **Agent**: bill-code-reviewer
+- **Agent**: bill-code-reviewer（預載 effective-java、clean-architecture skills）
 - **Skills**:
   - `/code-review` - 程式碼品質審查（Clean Code + 避免過度設計）
-  - `/review-pr` - PR 變更審查（branch 差異或 GitHub PR）
+  - `/review-pr` - PR 變更審查（branch 差異或 GitHub PR，在 forked context 中執行）
 - **專長**: Clean Code、避免過度設計、架構評估、PR Review
 
 #### 3. bill-java-developer
 
 Spring Boot 開發與資料庫優化專家
 
-- **Agent**: bill-java-developer
+- **Agent**: bill-java-developer（預載 effective-java、clean-architecture、mysql-optimization skills）
 - **Skills**:
   - `/design-solution` - 技術方案設計與建議
-  - `/optimize-query` - SQL/JPA 優化
-  - `/mysql-performance` - MySQL 性能優化
+  - `/optimize-query` - SQL/JPA 優化（在 forked context 中執行）
 - **專長**: Spring Boot、JPA、資料庫效能、企業架構
 
 #### 4. bill-java-skills
 
 Java 開發最佳實踐知識庫
 
-- **Skills** (自動觸發，無需手動調用):
+- **Skills**（被 agents 預載，不出現在 `/` 選單中）:
   - `clean-architecture` - Clean Architecture 設計原則
   - `effective-java` - Effective Java 最佳實踐
   - `mysql-optimization` - MySQL 效能優化與 JPA 調校
@@ -51,9 +50,22 @@ Java 開發最佳實踐知識庫
 > - **Skills** (`/xxx`): Slash command 或自動觸發的知識庫
 > - **Agents**: 根據對話自動啟動，提供互動式協助
 
+### Agent 進階能力
+
+- **知識預載**：bill-java-developer 和 bill-code-reviewer agents 會自動預載相關知識 skills（effective-java、clean-architecture、mysql-optimization），不需手動觸發
+- **專案記憶**：所有 agents 支援 project-level memory，會跨 session 記住專案特有的模式和慣例
+- **安全限制**：reviewer agents 僅具唯讀權限，不會意外修改程式碼
+
 ## 安裝
 
-### 新電腦安裝
+### 方式一：透過 /plugin marketplace（推薦，免 clone）
+
+在 Claude Code 中執行：
+```
+/plugin add marketplace xinqilin/claude-dev-toolkit-marketplace
+```
+
+### 方式二：透過 install.sh（clone 後使用 symlinks，git pull 自動更新）
 
 ```bash
 git clone https://github.com/xinqilin/claude-dev-toolkit-marketplace
@@ -127,10 +139,9 @@ gh auth login
 
 /optimize-query
 [貼上你的 SQL 或 JPA 程式碼]
-
-/mysql-performance
-[貼上你的 SQL 查詢或 EXPLAIN 結果]
 ```
+
+> **提示**：mysql-optimization 知識已自動預載到 bill-java-developer agent 中。
 
 #### 單元測試審查
 
@@ -178,8 +189,7 @@ project-claude-code-plugins/
 │   │   │   └── bill-java-developer.md
 │   │   └── skills/
 │   │       ├── design-solution/SKILL.md
-│   │       ├── optimize-query/SKILL.md
-│   │       └── mysql-performance/SKILL.md
+│   │       └── optimize-query/SKILL.md
 │   └── bill-java-skills/
 │       └── skills/
 │           ├── clean-architecture/

@@ -20,28 +20,27 @@ Focused on unit test review and best practices
 
 Code quality review and PR Review
 
-- **Agent**: bill-code-reviewer
+- **Agent**: bill-code-reviewer (preloads effective-java, clean-architecture skills)
 - **Skills**:
   - `/code-review` - Code quality review (Clean Code + avoiding over-engineering)
-  - `/review-pr` - PR change review (branch diff or GitHub PR)
+  - `/review-pr` - PR change review (branch diff or GitHub PR, runs in forked context)
 - **Expertise**: Clean Code, avoiding over-engineering, architecture evaluation, PR Review
 
 #### 3. bill-java-developer
 
 Spring Boot development and database optimization expert
 
-- **Agent**: bill-java-developer
+- **Agent**: bill-java-developer (preloads effective-java, clean-architecture, mysql-optimization skills)
 - **Skills**:
   - `/design-solution` - Technical solution design and recommendations
-  - `/optimize-query` - SQL/JPA optimization
-  - `/mysql-performance` - MySQL performance optimization
+  - `/optimize-query` - SQL/JPA optimization (runs in forked context)
 - **Expertise**: Spring Boot, JPA, database performance, enterprise architecture
 
 #### 4. bill-java-skills
 
 Java development best practices knowledge base
 
-- **Skills** (auto-triggered, no manual invocation needed):
+- **Skills** (preloaded by agents, not shown in `/` menu):
   - `clean-architecture` - Clean Architecture design principles
   - `effective-java` - Effective Java best practices
   - `mysql-optimization` - MySQL performance optimization and JPA tuning
@@ -51,9 +50,22 @@ Java development best practices knowledge base
 > - **Skills** (`/xxx`): Slash commands or auto-triggered knowledge base
 > - **Agents**: Automatically start based on conversation, provide interactive assistance
 
+### Agent Advanced Features
+
+- **Knowledge Preloading**: bill-java-developer and bill-code-reviewer agents automatically preload relevant knowledge skills (effective-java, clean-architecture, mysql-optimization) — no manual invocation needed
+- **Project Memory**: All agents support project-level memory, remembering project-specific patterns and conventions across sessions
+- **Safety Restrictions**: Reviewer agents have read-only permissions and will not accidentally modify code
+
 ## Installation
 
-### New Machine Setup
+### Option 1: Via /plugin marketplace (recommended, no clone needed)
+
+In Claude Code, run:
+```
+/plugin add marketplace xinqilin/claude-dev-toolkit-marketplace
+```
+
+### Option 2: Via install.sh (after cloning, uses symlinks — auto-updates on git pull)
 
 ```bash
 git clone https://github.com/xinqilin/claude-dev-toolkit-marketplace
@@ -127,10 +139,9 @@ gh auth login
 
 /optimize-query
 [Paste your SQL or JPA code]
-
-/mysql-performance
-[Paste your SQL query or EXPLAIN results]
 ```
+
+> **Tip**: mysql-optimization knowledge is automatically preloaded into the bill-java-developer agent.
 
 #### Unit Test Review
 
@@ -178,8 +189,7 @@ project-claude-code-plugins/
 │   │   │   └── bill-java-developer.md
 │   │   └── skills/
 │   │       ├── design-solution/SKILL.md
-│   │       ├── optimize-query/SKILL.md
-│   │       └── mysql-performance/SKILL.md
+│   │       └── optimize-query/SKILL.md
 │   └── bill-java-skills/
 │       └── skills/
 │           ├── clean-architecture/

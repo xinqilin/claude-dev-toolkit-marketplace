@@ -1,6 +1,9 @@
 ---
 name: mysql-optimization
-description: MySQL performance optimization guide for Spring Boot/JPA. Use when reviewing database code, discussing index design, query optimization, N+1 problems, JPA/Hibernate tuning, or analyzing EXPLAIN plans. Complements /mysql-performance and /optimize-query commands.
+description: MySQL performance optimization guide for Spring Boot/JPA. Use when reviewing database code, discussing index design, query optimization, N+1 problems, JPA/Hibernate tuning, or analyzing EXPLAIN plans. Complements /optimize-query command.
+user-invocable: false
+allowed-tools: Read, Grep, Glob
+model: sonnet
 ---
 
 # MySQL Performance Optimization
@@ -288,6 +291,87 @@ ORDER BY no_index_used_count DESC LIMIT 10;
 ```java
 @QueryHints(@QueryHint(name = "org.hibernate.readOnly", value = "true"))
 List<Order> findByStatus(OrderStatus status);
+```
+
+---
+
+## Schema Design
+
+### Normalization vs Denormalization
+
+- **3NF baseline**: Start normalized, denormalize only when read performance demands it
+- **Denormalization trade-offs**: Faster reads, slower writes, data duplication risk
+- **Common denormalization**: Store calculated totals, duplicate frequently joined columns
+
+### Data Type Selection
+
+```sql
+-- Use smallest sufficient type
+INT vs BIGINT           -- INT (4 bytes) if max 2.1B is enough
+VARCHAR(255) vs TEXT    -- VARCHAR for indexed columns, TEXT for large content
+DECIMAL vs FLOAT        -- DECIMAL for money, FLOAT for scientific
+DATETIME vs TIMESTAMP   -- TIMESTAMP (4 bytes, UTC) vs DATETIME (8 bytes, no TZ)
+```
+
+### NULL Handling
+
+- Nullable columns add 1 byte overhead per row
+- NULL values complicate index usage and comparisons
+- Use `NOT NULL DEFAULT ''` or `NOT NULL DEFAULT 0` when possible
+- `COUNT(nullable_col)` excludes NULLs — use `COUNT(*)` for total rows
+
+### Partitioning Considerations
+
+```sql
+-- Range partition by date (common for time-series data)
+CREATE TABLE orders (
+    id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL,
+    -- ...
+) PARTITION BY RANGE (YEAR(created_at)) (
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION pmax  VALUES LESS THAN MAXVALUE
+);
+```
+
+- Partition when table exceeds 50M+ rows
+- Partition key must be part of every unique index
+- Useful for archiving old data (drop partition instead of DELETE)
+
+---
+
+## MySQL Server Tuning
+
+### Buffer & Memory Configuration
+
+```ini
+# InnoDB buffer pool: 70-80% of available RAM for dedicated DB server
+innodb_buffer_pool_size = 4G
+
+# Sort buffer: per-connection, increase for complex ORDER BY
+sort_buffer_size = 4M
+
+# Join buffer: per-connection, increase for joins without indexes
+join_buffer_size = 4M
+
+# Temp table: in-memory before spilling to disk
+tmp_table_size = 64M
+max_heap_table_size = 64M
+```
+
+### Connection Configuration
+
+```ini
+# Max connections: monitor Threads_connected, set 20-30% headroom
+max_connections = 200
+
+# Max allowed packet: increase for large BLOBs or bulk inserts
+max_allowed_packet = 64M
+
+# Wait timeout: close idle connections (default 28800 = 8h, often too long)
+wait_timeout = 600
+interactive_timeout = 600
 ```
 
 ---

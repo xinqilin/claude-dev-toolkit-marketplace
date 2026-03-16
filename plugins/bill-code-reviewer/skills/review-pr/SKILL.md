@@ -4,6 +4,7 @@ description: Review pull request changes between branches or GitHub PRs with sen
 argument-hint: "[compare-branch-or-pr-number] [base-branch]"
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
+context: fork
 ---
 
 # PR Review

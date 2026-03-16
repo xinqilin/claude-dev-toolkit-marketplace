@@ -36,12 +36,17 @@ uninstall.sh                       # Remove symlinks
 
 Agent files (`agents/*.md`):
 - `name`, `description`, `tools`, `model`
+- `skills` - preload skills into agent context on startup
+- `memory` - persistence level (`project` for cross-session learning)
+- `disallowedTools` - explicitly forbid tools (e.g. reviewers forbid Edit, Write)
 
 Skill files (`skills/*/SKILL.md`):
 - `name` - determines the `/name` slash command
 - `description` - trigger conditions
 - `argument-hint` - shown in autocomplete
 - `allowed-tools`, `model` - optional
+- `user-invocable` - set `false` for knowledge-base skills (hidden from `/` menu)
+- `context` - set `fork` for heavy skills that should run in isolated context
 
 ## Installation
 
@@ -69,9 +74,18 @@ Symlinks target `~/.claude/agents/` and `~/.claude/skills/`.
 - `install.sh` 寫入 `~/.claude/`，在沙盒模式下需要 `dangerouslyDisableSandbox: true`
 - command → skill 轉換：在 frontmatter 加 `name` 欄位即可，其餘欄位照搬
 
+## Orchestration Pattern
+
+Agents preload skills via `skills` frontmatter. This means:
+- Agent = persona + workflow + output format
+- Skill = domain knowledge (preloaded or slash command)
+- Agent 啟動 → skills 自動注入 → agent 獲得領域知識，無需使用者手動觸發
+
+Example: `bill-java-developer` preloads `effective-java`, `clean-architecture`, `mysql-optimization`.
+
 ## Current Plugins
 
 1. **bill-billing-unit-test-reviewer** - Unit test review (`/review-test`)
 2. **bill-code-reviewer** - Code review (`/code-review`, `/review-pr`)
-3. **bill-java-developer** - Spring Boot dev (`/design-solution`, `/optimize-query`, `/mysql-performance`)
-4. **bill-java-skills** - Auto-triggered skills: clean-architecture, effective-java, mysql-optimization
+3. **bill-java-developer** - Spring Boot dev (`/design-solution`, `/optimize-query`)
+4. **bill-java-skills** - Knowledge-base skills (preloaded by agents, not in `/` menu): clean-architecture, effective-java, mysql-optimization
