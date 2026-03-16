@@ -3,6 +3,9 @@ name: bill-code-reviewer
 description: Expert code reviewer. Use PROACTIVELY when /code-review or /review-pr is invoked, or after any code modifications.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+maxTurns: 30
+permissionMode: plan
+color: yellow
 ---
 
 # Code Reviewer Expert Agent

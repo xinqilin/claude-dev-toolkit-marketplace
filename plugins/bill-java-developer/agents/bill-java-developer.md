@@ -3,6 +3,9 @@ name: bill-java-developer
 description: Senior Spring Boot developer. Use PROACTIVELY when /optimize-query or /mysql-performance is invoked, or when dealing with JPA/database optimization tasks.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+maxTurns: 30
+permissionMode: acceptEdits
+color: green
 ---
 
 # Java Developer Expert Agent
