@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: Review pull request changes between branches or GitHub PRs with senior developer standards
+description: Use when reviewing PR changes, comparing branches, or analyzing GitHub pull requests. Supports both gh CLI (PR number) and git diff (branch comparison) modes.
 argument-hint: "[compare-branch-or-pr-number] [base-branch]"
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
@@ -9,465 +9,114 @@ context: fork
 
 # PR Review
 
-Review pull request changes with senior Java developer standards, focusing on Clean Code and avoiding over-design.
+Review pull request changes with senior Java developer standards.
 
 Supports **two modes**:
-1. **GitHub PR Mode**: Review a GitHub PR by PR number (requires `gh` CLI)
-2. **Branch Comparison Mode**: Review changes between two local branches (uses `git diff`)
-
-## Purpose
-
-Review the **changes** in a pull request, not just static code. Focus on:
-- What changed and why
-- Impact of the changes
-- PR-specific concerns (commit quality, breaking changes, test coverage, CI status)
-- Code quality of the changes (using Clean Code principles)
+1. **GitHub PR Mode**: PR number (e.g., `123` or `#123`) → uses `gh pr view` + `gh pr diff`
+2. **Branch Comparison Mode**: branch name or empty → uses `git diff`
 
 ## Parameter Usage
 
-This command accepts two optional parameters with **automatic detection**:
-
-### Parameter 1: compare-branch-or-pr-number
-- **PR Number** (e.g., `123` or `#123`): Review GitHub PR using `gh` CLI
-- **Branch Name** (e.g., `feature-auth`): Review local branch using `git diff`
-- **Empty**: Use current branch (default)
-
-### Parameter 2: base-branch (optional, git diff mode only)
-- Default: `master`
-- Only used when comparing branches
-
-**Examples**:
 ```bash
-# Review GitHub PR #123 (gh mode)
-/review-pr 123
-/review-pr #123
-
-# Review current branch against master (git diff mode)
-/review-pr
-
-# Review feature-branch against master (git diff mode)
-/review-pr feature-branch
-
-# Review feature-branch against develop (git diff mode)
-/review-pr feature-branch develop
+/review-pr 123           # GitHub PR #123
+/review-pr               # Current branch vs master
+/review-pr feature-auth  # feature-auth vs master
+/review-pr feature-auth develop  # feature-auth vs develop
 ```
 
-## Step 0: Parameter Type Detection
+**Auto-detection**: Pure number → GitHub PR mode. Anything else → branch comparison mode.
 
-**Automatically detect whether to use GitHub PR mode or branch comparison mode**.
+## Workflow
 
-```bash
-# Get first parameter
-INPUT=${1:-""}
+### Step 1: Gather Information
 
-# Detect parameter type
-if [[ -z "$INPUT" ]]; then
-    # Empty parameter: use current branch vs master (git diff mode)
-    MODE="git_diff"
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    COMPARE=$CURRENT_BRANCH
-    BASE=${2:-master}
+**GitHub PR mode**: Use `gh pr view <PR_NUMBER> --json number,title,body,state,author,baseRefName,headRefName,additions,deletions,changedFiles,commits` and `gh pr diff <PR_NUMBER>`.
 
-elif [[ "$INPUT" =~ ^#?[0-9]+$ ]]; then
-    # Pure number (with optional # prefix): PR number (gh mode)
-    MODE="gh_pr"
-    PR_NUMBER="${INPUT#\#}"  # Remove # prefix if present
+**Branch comparison mode**: Use `git diff <base>..<compare> --name-status`, `git diff --stat`, `git log --oneline --no-merges`, and `git diff` for full diff.
 
-else
-    # Other: branch name (git diff mode)
-    MODE="git_diff"
-    COMPARE=$INPUT
-    BASE=${2:-master}
-fi
-```
+### Step 2: Categorize Changed Files
 
-## Step 1: Mode-Specific Processing
+From `git diff --name-status`: Added (A), Modified (M), Deleted (D), Renamed (R).
 
-### Mode A: GitHub PR Mode (`MODE="gh_pr"`)
+Focus on `.java` files. Mention other types (`.yml`, `.properties`) briefly.
 
-This mode uses GitHub CLI (`gh`) to review a PR by PR number.
+### Step 3: Code Quality Review
 
-#### 1.1 Verify gh CLI Availability
+Apply the same standards as `/code-review` skill:
+- Naming and Readability
+- Method Design
+- Avoiding Over-design
+- Exception Handling
+- Spring Boot Best Practices
+- Performance Considerations
 
-```bash
-if [[ "$MODE" == "gh_pr" ]]; then
-    # Check if gh is installed
-    if ! command -v gh &> /dev/null; then
-        echo "錯誤：GitHub CLI (gh) 未安裝"
-        echo ""
-        echo "請執行以下指令安裝："
-        echo "  brew install gh"
-        echo ""
-        echo "或參考：https://cli.github.com/"
-        exit 1
-    fi
+**Focus on the changed lines, not the entire file.**
 
-    # Check if gh is authenticated
-    if ! gh auth status &> /dev/null; then
-        echo "錯誤：GitHub CLI 尚未認證"
-        echo ""
-        echo "請執行以下指令進行認證："
-        echo "  gh auth login"
-        echo ""
-        exit 1
-    fi
-fi
-```
+### Step 4: PR-Specific Checks (Key Differentiator from Code Review)
 
-#### 1.2 Get PR Information
+#### Test Coverage
+- New features: corresponding test files?
+- Bug fixes: regression test added?
+- `OrderService.java` changed → `OrderServiceTest.java` should be updated
 
-```bash
-if [[ "$MODE" == "gh_pr" ]]; then
-    # Get PR metadata using JSON output
-    PR_JSON=$(gh pr view "$PR_NUMBER" --json \
-        number,title,body,state,author,\
-        baseRefName,headRefName,\
-        additions,deletions,changedFiles,\
-        statusCheckRollup,latestReviews,\
-        createdAt,updatedAt 2>&1)
-
-    # Check if command succeeded
-    if [[ $? -ne 0 ]]; then
-        echo "錯誤：無法取得 PR #$PR_NUMBER 的資訊"
-        echo ""
-        echo "$PR_JSON"
-        echo ""
-        echo "請確認："
-        echo "1. PR 編號是否正確"
-        echo "2. 你是否有權限存取此 repository"
-        echo "3. 是否在正確的 git repository 中"
-        exit 1
-    fi
-
-    # Parse JSON (requires jq)
-    # Check if jq is available
-    if ! command -v jq &> /dev/null; then
-        echo "警告：jq 未安裝，將使用簡化的 JSON 解析"
-        echo "建議安裝 jq 以獲得更好的體驗：brew install jq"
-        # Use simplified parsing if jq is not available
-        PR_TITLE=$(echo "$PR_JSON" | grep -o '"title":"[^"]*"' | cut -d'"' -f4)
-        PR_AUTHOR=$(echo "$PR_JSON" | grep -o '"login":"[^"]*"' | head -1 | cut -d'"' -f4)
-        PR_STATE=$(echo "$PR_JSON" | grep -o '"state":"[^"]*"' | cut -d'"' -f4)
-    else
-        # Use jq for reliable JSON parsing
-        PR_TITLE=$(echo "$PR_JSON" | jq -r '.title')
-        PR_AUTHOR=$(echo "$PR_JSON" | jq -r '.author.login')
-        PR_STATE=$(echo "$PR_JSON" | jq -r '.state')
-        BASE_BRANCH=$(echo "$PR_JSON" | jq -r '.baseRefName')
-        HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.headRefName')
-        ADDITIONS=$(echo "$PR_JSON" | jq -r '.additions')
-        DELETIONS=$(echo "$PR_JSON" | jq -r '.deletions')
-        CHANGED_FILES=$(echo "$PR_JSON" | jq -r '.changedFiles')
-    fi
-
-    # Get diff
-    PR_DIFF=$(gh pr diff "$PR_NUMBER" --patch 2>&1)
-
-    # Get changed files list
-    CHANGED_FILES_LIST=$(gh pr diff "$PR_NUMBER" --name-only 2>&1)
-
-    # Get commits
-    PR_COMMITS=$(gh pr view "$PR_NUMBER" --json commits \
-        --jq '.commits[] | "\(.oid[0:7]) \(.messageHeadline)"' 2>&1)
-fi
-```
-
-### Mode B: Branch Comparison Mode (`MODE="git_diff"`)
-
-This mode uses standard `git diff` to compare local branches.
-
-#### 1.1 Verify Git Repository
-First, verify we're in a git repository:
-```bash
-if [[ "$MODE" == "git_diff" ]]; then
-    git rev-parse --git-dir 2>/dev/null
-    if [[ $? -ne 0 ]]; then
-        echo "錯誤：此指令必須在 git repository 中執行"
-        exit 1
-    fi
-fi
-```
-
-#### 1.2 Determine Branches
-```bash
-if [[ "$MODE" == "git_diff" ]]; then
-    # Get current branch
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-    # Compare and base branches were already set in Step 0
-    # COMPARE=${1:-$CURRENT_BRANCH}
-    # BASE=${2:-master}
-fi
-```
-
-#### 1.3 Verify Branches Exist (with fallback to gh)
-```bash
-if [[ "$MODE" == "git_diff" ]]; then
-    # Verify compare branch exists
-    if ! git rev-parse --verify "$COMPARE" >/dev/null 2>&1; then
-        echo "錯誤：Branch '$COMPARE' 不存在"
-        echo ""
-        echo "可用的 branches:"
-        git branch -a
-        echo ""
-
-        # Fallback: Try to find corresponding PR on GitHub
-        echo "嘗試在 GitHub 上查找對應的 PR..."
-        if command -v gh &> /dev/null && gh auth status &> /dev/null; then
-            PR_INFO=$(gh pr list --head "$COMPARE" --json number,title --limit 1 2>/dev/null)
-            if [[ -n "$PR_INFO" ]] && command -v jq &> /dev/null; then
-                PR_NUM=$(echo "$PR_INFO" | jq -r '.[0].number')
-                PR_TITLE=$(echo "$PR_INFO" | jq -r '.[0].title')
-                if [[ "$PR_NUM" != "null" ]]; then
-                    echo ""
-                    echo "找到對應的 PR #$PR_NUM: $PR_TITLE"
-                    echo ""
-                    echo "建議使用以下指令審查："
-                    echo "  /review-pr $PR_NUM"
-                    echo ""
-                fi
-            fi
-        fi
-        exit 1
-    fi
-
-    # Verify base branch exists
-    if ! git rev-parse --verify "$BASE" >/dev/null 2>&1; then
-        echo "錯誤：Branch '$BASE' 不存在"
-        echo ""
-        echo "可用的 branches:"
-        git branch -a
-        exit 1
-    fi
-fi
-```
-
-#### 1.4 Get Change Information
-```bash
-if [[ "$MODE" == "git_diff" ]]; then
-    # Get changed files with status
-    git diff "$BASE..$COMPARE" --name-status
-
-    # Get diff statistics
-    git diff "$BASE..$COMPARE" --stat
-
-    # Get commit history
-    git log "$BASE..$COMPARE" --oneline --no-merges
-
-    # Get full diff (for analysis)
-    git diff "$BASE..$COMPARE"
-fi
-```
-
-#### 1.5 Check for Empty Diff
-```bash
-if [[ "$MODE" == "git_diff" ]]; then
-    DIFF_OUTPUT=$(git diff "$BASE..$COMPARE")
-    if [[ -z "$DIFF_OUTPUT" ]]; then
-        echo "沒有發現任何差異"
-        echo ""
-        echo "$COMPARE 和 $BASE 兩個 branch 的程式碼相同"
-        exit 0
-    fi
-fi
-```
-
-## Step 2: Analyze Changes
-
-### 2.1 Categorize Changed Files
-From `git diff --name-status`, categorize files:
-- **A** = Added files
-- **M** = Modified files
-- **D** = Deleted files
-- **R** = Renamed files
-
-Focus primarily on `.java` files. Mention other file types (`.xml`, `.yml`, `.properties`) briefly.
-
-### 2.2 Parse Diff for Code Changes
-For each modified `.java` file:
-- Identify which methods/classes were changed
-- Extract the changed code blocks (lines with +/-)
-- Focus review on the **changed parts**, not the entire file
-
-### 2.3 Commit History Analysis
-Review commit messages and commit structure:
-- Are commit messages clear and descriptive?
-- Are commits reasonably sized (not too large)?
-- Are there meaningless merge commits?
-- Do commits represent logical units of work?
-
-## Step 3: Code Quality Review
-
-**IMPORTANT**: Reuse the review principles from `code-review` skill. Do NOT repeat the full checklist here.
-
-For each changed code block, check:
-1. Naming and Readability
-2. Method Design
-3. Avoiding Over-design
-4. Exception Handling
-5. Spring Boot Best Practices
-6. Performance Considerations
-
-## Step 4: PR-Specific Checks
-
-These checks are unique to PR review (not in regular code review):
-
-### 4.1 Test Coverage
-- Are there new/updated test files for the changes?
-- For new features: Is there adequate test coverage?
-- For bug fixes: Is there a regression test?
-
-**Look for**:
-- Test files matching the changed source files
-- Example: `OrderService.java` should have `OrderServiceTest.java`
-
-### 4.2 Breaking Changes
-Check if changes might break existing functionality:
-- Removed public methods
-- Changed method signatures
-- Removed or renamed fields in DTOs/entities
+#### Breaking Changes
+- Removed public methods or changed method signatures
+- Renamed fields in DTOs/entities
 - Changed API endpoints or request/response formats
 
-### 4.3 Unrelated Changes
-- Are there files that don't belong in this PR?
-- Are there accidental formatting changes in unrelated files?
-- Are there commented-out code blocks?
+#### Unrelated Changes
+- Files that don't belong in this PR
+- Accidental formatting changes in unrelated files
 
-### 4.4 Debug/TODO Code
+#### Debug/TODO Code
+Check for leftover `System.out.println`, `TODO`, `FIXME`:
 ```bash
-# Search for debug code
-git diff "$BASE..$COMPARE" | grep -E "System.out.println|TODO|FIXME|XXX"
+git diff <base>..<compare> | grep -E "System.out.println|TODO|FIXME|XXX"
 ```
 
-- Are there leftover `System.out.println` statements?
-- Are there unresolved TODO/FIXME comments?
+#### Documentation
+- Public API changes → docs updated?
+- New dependencies → explained?
 
-### 4.5 Documentation
-- If public APIs changed: Is documentation updated?
-- If configuration changed: Is README/docs updated?
-- Are there new dependencies that need explanation?
-
-## Step 5: Generate PR Review Report
-
-### Output Format (Traditional Chinese)
+## Output Format
 
 **IMPORTANT: All output must be in Traditional Chinese (繁體中文)**
 
----
-
+```markdown
 # PR Review 報告
 
 ## 變更概覽
-
-**PR 資訊** (僅 gh mode):
-- **PR 編號**: #[PR number]
-- **標題**: [PR title]
-- **作者**: @[PR author]
-- **狀態**: OPEN / MERGED / CLOSED / DRAFT
-- **Base Branch**: [base branch]
-- **Head Branch**: [head branch]
-
-**變更統計**:
-- **變更檔案數量**: [total files] 個檔案
-- **新增**: +[lines added] 行
-- **刪除**: -[lines deleted] 行
-- **主要變更類型**: Feature / BugFix / Refactor / Other
+- **PR 資訊** (gh mode): 編號、標題、作者、狀態、base/head branch
+- **變更統計**: 檔案數量、+新增行、-刪除行、主要變更類型
 
 ## Commit 歷史分析
-
-**Commit 數量**: [total commits]
-
-**Commit 品質評估**: 優秀 / 良好 / 需改進
-
-### 優點
-- [List good aspects of commit history]
-
-### 建議
-- [List suggestions for commit improvements, if any]
+- Commit 數量和品質評估
 
 ## 程式碼品質評估
-
-- **複雜度評分**: Low / Medium / High
-- **可維護性**: [1-10] / 10
-- **Over-design 程度**: 無 / 輕微 / 嚴重
+- 複雜度、可維護性、Over-design 程度
 
 ## 變更檔案詳細審查
 
-### 新增檔案 ([count] 個)
-
-| 檔案 | 評估 | 說明 |
-|------|------|------|
-| [filename] | [優秀/良好/需改進] | [brief assessment] |
-
-### 修改檔案 ([count] 個)
-
-#### Priority 1 - 必須修正
+### Priority 1 - 必須修正
 | 問題 | 位置 | 影響 | 修正方式 |
-|------|------|------|----------|
-| [issue description] | [file:line] | [impact] | [fix suggestion] |
 
-#### Priority 2 - 建議改進
+### Priority 2 - 建議改進
 | 問題 | 位置 | 影響 | 修正方式 |
-|------|------|------|----------|
-| [issue description] | [file:line] | [impact] | [fix suggestion] |
 
 ## PR 特定檢查
-
-### 測試覆蓋
-- [ ] **[狀態]** - [說明]
-
-### 文件更新
-- [x] README 已更新
-- [ ] **缺少 API 文件** - 建議新增或更新 API 文件
-
-### Breaking Changes
-- [ ] **無 Breaking Changes**
-
-### Debug/TODO Code
-- [x] 沒有遺留的 debug code
-
-## 整體建議
-
-### 建議合併前修正 (Priority 1)
-1. [必須修正的問題]
-
-### 建議後續改進 (Priority 2)
-1. [建議改進的項目]
+- 測試覆蓋 / 文件更新 / Breaking Changes / Debug Code
 
 ## 總結評估
-
 **整體評價**: 優秀 / 良好 / 需改進 / 不建議合併
+**建議合併時機**: [條件]
+```
 
-**優點**:
-- [列出主要優點]
+## Gotchas
 
-**主要風險**:
-- [列出主要風險，如果有]
+<!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->
 
-**建議合併時機**: [建議何時可以合併，或需要什麼條件]
-
----
-
-## Error Handling
-
-### Git Diff Mode Errors
-
-1. **Branch doesn't exist**: Show clear error message, list available branches, fallback to gh
-2. **No differences**: Message: "沒有發現任何差異。[compare] 和 [base] 兩個 branch 的程式碼相同。"
-3. **Not in git repository**: Message: "錯誤：此指令必須在 git repository 中執行。"
-
-### GitHub PR Mode Errors
-
-1. **gh CLI not installed**: Provide installation instructions: `brew install gh`
-2. **gh CLI not authenticated**: Provide: `gh auth login`
-3. **PR doesn't exist**: Check PR number, access, repository
-4. **jq not installed**: Warning, fallback to grep-based parsing
-
-## Review Principles
-
-1. **Focus on changes**: Review what changed, not the entire codebase
-2. **Use Clean Code standards**: Apply the same standards as `/code-review`
-3. **PR-specific concerns**: Test coverage, breaking changes, commit quality
-4. **Be constructive**: Provide clear, actionable feedback
-5. **Prioritize issues**: Distinguish between "must fix" and "nice to have"
-6. **Avoid over-design**: Check if changes are unnecessarily complex
+- **大型 PR diff 可能被截斷**：`gh pr diff` 對 500+ 行的 PR 可能不完整，超過時應逐檔案 `gh api` 讀取
+- **rename detection 閾值 50%**：重構性 rename 可能被 git diff 當成 delete+add，要用 `--find-renames` 確認
+- **test 檔案也要審查品質**：不只看「有沒有 test」，要看 test 是否有意義（真實場景、正確 assertion）
+- **CI 全過不代表程式碼品質好**：CI 只檢查編譯和測試，不檢查設計和架構問題
+- **不要只看 diff**：對於關鍵修改，務必讀完整的 method/class 上下文才能判斷影響

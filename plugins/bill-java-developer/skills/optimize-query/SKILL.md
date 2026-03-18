@@ -1,6 +1,6 @@
 ---
 name: optimize-query
-description: Optimize SQL/JPA query performance
+description: Use when analyzing slow queries, optimizing SQL/JPA performance, reviewing EXPLAIN plans, or troubleshooting database bottlenecks.
 argument-hint: [file-or-query]
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
@@ -401,3 +401,13 @@ After optimizing:
 - Development/testing environment (optimize for production data)
 
 **IMPORTANT: All output must be in Traditional Chinese (繁體中文)**
+
+## Gotchas
+
+<!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->
+
+- **EXPLAIN 在空表或少量資料上結果不準確**：確保測試資料夠多（接近生產環境規模）才能得到有意義的 EXPLAIN 輸出
+- **加 index 前先確認 selectivity**：`SELECT COUNT(DISTINCT col) / COUNT(*) FROM table` — 低選擇性（如 status 只有 5 種值）的 index 效果很差
+- **MySQL query optimizer 可能忽略你的 index**：用 `FORCE INDEX` 前先理解為什麼 optimizer 沒選這個 index，強制使用反而可能更慢
+- **Spring Data JPA findAll() 無分頁保護**：資料量大時直接 OOM，查詢前確認是否需要 Pageable 或 limit
+- **JOIN FETCH + Pageable 組合有陷阱**：Hibernate 會先載入全表再記憶體分頁（HHH000104 警告），需改為子查詢分頁

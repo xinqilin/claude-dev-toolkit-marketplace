@@ -55,6 +55,7 @@ Java development best practices knowledge base
 - **Knowledge Preloading**: bill-java-developer and bill-code-reviewer agents automatically preload relevant knowledge skills (effective-java, clean-architecture, mysql-optimization) — no manual invocation needed
 - **Project Memory**: All agents support project-level memory, remembering project-specific patterns and conventions across sessions
 - **Safety Restrictions**: Reviewer agents have read-only permissions and will not accidentally modify code
+- **Gotchas Protection**: Every skill includes a curated Gotchas section — common pitfalls that Claude tends to fall into, ensuring higher quality output
 
 ## Installation
 
@@ -62,7 +63,7 @@ Java development best practices knowledge base
 
 In Claude Code, run:
 ```
-/plugin add marketplace xinqilin/claude-dev-toolkit-marketplace
+/plugin marketplace add xinqilin/claude-dev-toolkit-marketplace
 ```
 
 ### Option 2: Via install.sh (after cloning, uses symlinks — auto-updates on git pull)
@@ -94,11 +95,13 @@ cd claude-dev-toolkit-marketplace
 
 ### Update
 
-Since installation uses symlinks, just `git pull` — no reinstall needed.
+**install.sh users**: `git pull` — symlinks auto-update, no reinstall needed.
 
 ```bash
 git pull
 ```
+
+**marketplace users**: Updates are pulled from the GitHub repo automatically when the plugin reloads.
 
 ## Quick Start
 
@@ -159,11 +162,7 @@ Agents automatically activate based on conversation context:
 
 ### Auto-Triggered Skills (bill-java-skills)
 
-No invocation needed — Claude automatically applies these principles:
-
-- **clean-architecture**: When discussing architecture design, layer separation, dependency rules
-- **effective-java**: When reviewing Java code quality, discussing design patterns
-- **mysql-optimization**: When discussing database performance, N+1 issues, JPA optimization
+Knowledge skills (clean-architecture, effective-java, mysql-optimization) are preloaded into agents automatically — see [Agent Advanced Features](#agent-advanced-features) above.
 
 ## Directory Structure
 

@@ -55,6 +55,7 @@ Java 開發最佳實踐知識庫
 - **知識預載**：bill-java-developer 和 bill-code-reviewer agents 會自動預載相關知識 skills（effective-java、clean-architecture、mysql-optimization），不需手動觸發
 - **專案記憶**：所有 agents 支援 project-level memory，會跨 session 記住專案特有的模式和慣例
 - **安全限制**：reviewer agents 僅具唯讀權限，不會意外修改程式碼
+- **Gotchas 防護**：每個 skill 都包含精選的 Gotchas 區塊 — Claude 常犯的錯誤陷阱，確保更高品質的輸出
 
 ## 安裝
 
@@ -62,7 +63,7 @@ Java 開發最佳實踐知識庫
 
 在 Claude Code 中執行：
 ```
-/plugin add marketplace xinqilin/claude-dev-toolkit-marketplace
+/plugin marketplace add xinqilin/claude-dev-toolkit-marketplace
 ```
 
 ### 方式二：透過 install.sh（clone 後使用 symlinks，git pull 自動更新）
@@ -94,11 +95,13 @@ cd claude-dev-toolkit-marketplace
 
 ### 更新
 
-安裝使用 symlink，直接 `git pull` 即可更新，不需重新安裝。
+**install.sh 使用者**：直接 `git pull`，symlink 自動更新，不需重新安裝。
 
 ```bash
 git pull
 ```
+
+**marketplace 使用者**：Plugin 重新載入時自動從 GitHub repo 拉取更新。
 
 ## 快速開始
 
@@ -159,11 +162,7 @@ Agents 根據對話內容自動啟動：
 
 ### 自動觸發 Skills（bill-java-skills）
 
-無需調用，Claude 自動應用這些原則：
-
-- **clean-architecture**: 討論架構設計、分層結構、依賴規則時
-- **effective-java**: 審查 Java 程式碼品質、討論設計模式時
-- **mysql-optimization**: 討論資料庫效能、N+1 問題、JPA 優化時
+知識 skills（clean-architecture、effective-java、mysql-optimization）已自動預載到 agents 中，無需手動觸發 — 詳見上方 [Agent 進階能力](#agent-進階能力)。
 
 ## 目錄結構
 

@@ -1,6 +1,6 @@
 ---
 name: review-test
-description: Review team members' unit test code for quality and best practices
+description: Use PROACTIVELY when reviewing unit test code quality, discussing test design, or evaluating test coverage for Java/Spring Boot projects.
 argument-hint: [test-file-or-directory]
 allowed-tools: Read, Grep, Glob
 model: sonnet
@@ -8,7 +8,7 @@ model: sonnet
 
 # Review Unit Test
 
-Review team members' unit test code to ensure test quality meets senior developer standards.
+Review unit test code to ensure quality meets senior developer standards.
 
 ## Core Principle
 
@@ -22,113 +22,49 @@ Review team members' unit test code to ensure test quality meets senior develope
 - Does the tested branch actually exist in the code?
 - Are there any hypothetical "what-if" test scenarios?
 
-**Bad Example**:
 ```java
-// Assuming facade throws IllegalArgumentException, but it actually doesn't
+// Bad: Assuming exception is thrown without checking source code
 @Test
 void shouldThrowIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> facade.process(null));
 }
-```
 
-**Good Example**:
-```java
-// First check the source code, confirm this exception is actually thrown
+// Good: Verified AcFacade.java:45 actually throws TokenInvalidException
 @Test
 @DisplayName("當Token無效時_應該拋出TokenInvalidException")
 void shouldThrowTokenInvalidExceptionWhenTokenIsInvalid() {
-    // AcFacade.java:45 actually throws this exception
     assertThrows(TokenInvalidException.class, () -> facade.process(invalidToken));
 }
 ```
 
 ### 2. Over-Design Check
 
-Common over-design problems:
-
-- **Over-abstracted Helper Methods**
-  ```java
-  // Bad: Over-encapsulation
-  private Order createTestOrder() {
-      return createTestOrder(DEFAULT_USER, DEFAULT_ITEMS, DEFAULT_AMOUNT);
-  }
-
-  // Good: Clear and direct
-  Order order = new Order(userId, items, amount);
-  ```
-
-- **Unnecessary Base Classes**
-  ```java
-  // Bad: Complex inheritance for tests
-  class OrderServiceTest extends AbstractServiceTest<Order, OrderRepository>
-
-  // Good: Simple and direct
-  class OrderServiceTest { ... }
-  ```
-
-- **Excessive Mock Setup**
-  ```java
-  // Bad: Mock everything upfront
-  @BeforeEach
-  void setup() {
-      when(repo.findById(any())).thenReturn(Optional.of(entity));
-      when(repo.save(any())).thenReturn(entity);
-      when(repo.delete(any())).thenReturn(void);
-      // ... 10 more lines
-  }
-
-  // Good: Mock only what's needed per test
-  @Test
-  void shouldFindOrder() {
-      when(repo.findById(1L)).thenReturn(Optional.of(order));
-      // test
-  }
-  ```
+- **Over-abstracted Helper Methods**: `createTestOrder(DEFAULT_USER, DEFAULT_ITEMS, DEFAULT_AMOUNT)` — just write `new Order(userId, items, amount)` inline
+- **Unnecessary Base Classes**: `extends AbstractServiceTest<Order, OrderRepository>` — just `class OrderServiceTest { ... }`
+- **Excessive Mock Setup in @BeforeEach**: Mock only what's needed per test, not everything upfront
 
 ### 3. Test Responsibility Separation
 
 | Layer | Should Test | Should NOT Test |
 |-------|-------------|-----------------|
-| Model | Bean Validation (@NotBlank, @Size, etc.) | - |
-| Controller | HTTP behavior, status codes, JSON serialization | Duplicate Validation rules |
+| Model | Bean Validation (@NotBlank, @Size, etc.) | — |
+| Controller | HTTP behavior, status codes, JSON serialization | Duplicate validation rules |
 | Service | Business logic, state changes | Database operation details |
 
-### 4. Test Naming and Structure
+### 4. Naming and Structure
 
-**Use @DisplayName in Traditional Chinese**:
-```java
-@Test
-@DisplayName("當訂單金額超過限制時_應該拋出例外")
-void shouldThrowExceptionWhenAmountExceedsLimit() { ... }
-```
-
-**Use @Nested for organization**:
-```java
-class UserServiceTest {
-    @Nested
-    @DisplayName("使用者註冊測試")
-    class RegisterUser {
-        @Test
-        @DisplayName("當提供有效資料時_應該成功建立使用者")
-        void shouldCreateUserWithValidData() { ... }
-    }
-}
-```
+- `@DisplayName` in Traditional Chinese: `"當訂單金額超過限制時_應該拋出例外"`
+- Use `@Nested` for logical grouping
+- Test method: `should_expectedBehavior_when_condition()`
 
 ### 5. Verification Strategy
 
-**Prefer State Verification**:
+**Prefer state verification over interaction verification**:
 ```java
 // Good: State verification
 assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
 
-// Avoid: Interaction verification (unless necessary)
-verify(repository).save(any()); // Fragile!
-```
-
-**Use interaction verification only when state cannot be asserted**:
-```java
-// External service call cannot be verified by state
+// Use interaction verification only when state cannot be asserted
 verify(emailService).sendOrderCompletionEmail(orderId);
 ```
 
@@ -137,13 +73,11 @@ verify(emailService).sendOrderCompletionEmail(orderId);
 ### Reality
 - [ ] All tested exceptions are actually thrown in the code
 - [ ] All test scenarios reflect real system behavior
-- [ ] No hypothetical "what-if" tests
 
 ### Simplicity
 - [ ] No over-abstracted helper methods
 - [ ] No unnecessary test base classes
-- [ ] Mock setup is minimal, only what's needed
-- [ ] No duplicate equivalence class tests
+- [ ] Mock setup is minimal and per-test
 
 ### Responsibility Separation
 - [ ] Model tests focus on Validation
@@ -152,9 +86,9 @@ verify(emailService).sendOrderCompletionEmail(orderId);
 
 ### Code Quality
 - [ ] Follows AAA Pattern (Arrange-Act-Assert)
-- [ ] DisplayName uses Traditional Chinese
-- [ ] Uses @Nested for organization
-- [ ] State verification preferred over interaction verification
+- [ ] `@DisplayName` in Traditional Chinese
+- [ ] Uses `@Nested` for organization
+- [ ] State verification preferred
 
 ## Output Format
 
@@ -163,23 +97,21 @@ verify(emailService).sendOrderCompletionEmail(orderId);
 ### 測試分析
 - **覆蓋率評估**：涵蓋了什麼、遺漏了什麼
 - **真實性檢查**：是否有虛構的測試場景
-- **職責檢查**：測試是否在正確的層級
 
 ### 發現的問題
-每個問題包含：
-- **問題**：描述問題
-- **證據**：程式碼行號參考
-- **影響**：為什麼這是問題
-- **修正**：具體改進建議
+- **問題** / **證據**（行號） / **影響** / **修正**
 
 ### 建議
 - 需要新增的測試（附理由）
 - 需要刪除的測試（附理由）
 - 需要重構的測試（附前後對比）
 
-## Remember
+## Gotchas
 
-1. **NEVER Over-Design**
-2. **Read the code first, then write tests**
-3. **Every test must have evidence - don't fabricate scenarios**
-4. **Simple is better than complex**
+<!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->
+
+- **Mockito void method 寫法錯誤**：`when(service.voidMethod()).thenReturn(...)` 會編譯錯誤。void method 要用 `doNothing().when(service).voidMethod()`
+- **@SpringBootTest 過度使用**：大多數 unit test 只需要 `@ExtendWith(MockitoExtension.class)`，@SpringBootTest 載入整個 ApplicationContext 很慢
+- **verify() 預設 times(1)**：如果方法被呼叫 0 次不會報錯，要明確寫 `verify(service, times(1)).method()`
+- **@MockBean 導致 Spring Context 重建**：同一測試類別混用不同 @MockBean 組合會讓 Spring 每次都重建 context，大幅降低測試速度
+- **assertThat(list).containsExactly() 優於 assertEquals**：失敗時提供更清楚的差異說明（哪個元素不符）

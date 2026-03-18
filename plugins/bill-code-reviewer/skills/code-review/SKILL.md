@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Senior Java code review with Clean Code principles and no over-design
+description: Use PROACTIVELY when reviewing Java/Spring Boot code quality, Clean Code compliance, or over-design concerns.
 argument-hint: [file-or-directory]
 allowed-tools: Read, Grep, Glob, Bash
 model: sonnet
@@ -12,92 +12,13 @@ Review code with senior Java developer (15+ years experience) standards, focusin
 
 ## Core Philosophy
 
-### 1. Clean Code
-Code must be clear, readable, and maintainable. The next person should understand it quickly.
-
-### 2. NEVER Over-design
-The simplest solution is the best solution. Don't predict the future, don't design hypothetically.
-
-### 3. Senior Developer Standards
-Battle-tested, pragmatic problem solving.
+1. **Clean Code** — The next person should understand it quickly
+2. **NEVER Over-design** — Solve the current problem only; don't predict the future
+3. **Pragmatic** — Battle-tested, consider actual maintenance cost
 
 ## Review Focus Areas
 
-### 1. Naming and Readability
-
-**Names should be self-explanatory**:
-```java
-// Bad
-int d; // elapsed time in days
-List<int[]> list1;
-
-// Good
-int elapsedTimeInDays;
-List<Cell> flaggedCells;
-```
-
-**Boolean variables use is/has/can prefix**:
-```java
-// Bad
-boolean login;
-boolean permission;
-
-// Good
-boolean isLoggedIn;
-boolean hasPermission;
-```
-
-**Avoid abbreviations** (except widely known ones):
-```java
-// Bad
-String genymdhms; // generation date, year, month, day, hour, minute, second
-UserRepo usrRep;
-
-// Good
-String generationTimestamp;
-UserRepository userRepository;
-```
-
-### 2. Method Design
-
-**Methods should be short and do one thing**:
-```java
-// Bad: One method doing too much
-public void processOrder(Order order) {
-    // validation (20 lines)
-    // calculation (30 lines)
-    // save (15 lines)
-    // notification (20 lines)
-}
-
-// Good: Split into small methods
-public void processOrder(Order order) {
-    validateOrder(order);
-    calculateTotal(order);
-    saveOrder(order);
-    sendNotification(order);
-}
-```
-
-**Reduce nesting levels** (Guard Clause):
-```java
-// Bad: Deep nesting
-if (user != null) {
-    if (user.isActive()) {
-        if (user.hasPermission()) {
-            // do something
-        }
-    }
-}
-
-// Good: Guard Clause
-if (user == null) return;
-if (!user.isActive()) return;
-if (!user.hasPermission()) return;
-// do something
-```
-
-### 3. Avoiding Over-design
+### 1. Avoiding Over-design (Most Important)
 
 **Don't abstract too early** (Rule of Three):
 ```java
@@ -106,170 +27,77 @@ interface PaymentProcessor { ... }
 class CreditCardPaymentProcessor implements PaymentProcessor { ... }
 // Only supports credit card anyway
 
-// Good: Wait until actually needed
+// Good: Wait until multiple payment methods are actually needed
 class PaymentService {
     public void processCreditCardPayment(...) { ... }
 }
-// Extract interface when multiple payment methods are actually needed
 ```
 
-**Don't design hypothetically** (YAGNI):
+**YAGNI — No hypothetical design**:
 ```java
-// Bad: Predicting future requirements
+// Bad: Fields for "might need later"
 class Order {
-    private List<Item> items;
-    private List<Item> futureItems; // Might need later?
-    private PaymentStrategy paymentStrategy; // Might change later?
+    private PaymentStrategy paymentStrategy;  // Might change later?
     private ShippingStrategy shippingStrategy; // Might change later?
 }
 
 // Good: Solve current problem
 class Order {
-    private List<Item> items;
     private String paymentMethod; // Enough for now
 }
 ```
 
-**Avoid meaningless interfaces**:
+**Avoid meaningless interfaces** (single-implementation interfaces add zero value):
 ```java
-// Bad: Interface with only one implementation
+// Bad: UserServiceImpl only has one implementation
 interface UserService { ... }
 class UserServiceImpl implements UserService { ... }
 
-// Good: Just use the class
+// Good: Extract interface when multiple implementations are needed
 class UserService { ... }
-// Extract interface when multiple implementations are actually needed
 ```
 
-### 4. Exception Handling
+### 2. Spring Boot Anti-Patterns
 
-**Don't swallow exceptions**:
-```java
-// Bad
-try {
-    processOrder(order);
-} catch (Exception e) {
-    log.error("Error"); // No context
-}
+- `@Transactional` self-invocation trap: calling an `@Transactional` method from within the same class bypasses the proxy
+- `@Transactional` on controller or repository (should be service layer only)
+- `@Autowired` field injection instead of constructor injection
+- Business logic in controllers
 
-// Good
-try {
-    processOrder(order);
-} catch (PaymentException e) {
-    log.error("Payment failed for order {}: {}", order.getId(), e.getMessage(), e);
-    throw new OrderProcessingException("Failed to process order: " + order.getId(), e);
-}
-```
+### 3. Other Quality Checks
 
-**Use specific exception types**:
-```java
-// Bad
-throw new Exception("User not found");
-
-// Good
-throw new UserNotFoundException("User not found: " + userId);
-```
-
-### 5. Spring Boot Best Practices
-
-**Use Constructor Injection**:
-```java
-// Bad: Field Injection
-@Service
-public class OrderService {
-    @Autowired
-    private OrderRepository orderRepository;
-}
-
-// Good: Constructor Injection
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-    private final OrderRepository orderRepository;
-}
-```
-
-**Clear transaction boundaries**:
-```java
-// Bad: No transaction
-public void transferMoney(Long from, Long to, BigDecimal amount) {
-    accountRepo.debit(from, amount);
-    accountRepo.credit(to, amount); // If this fails, above won't rollback
-}
-
-// Good: Explicit transaction
-@Transactional
-public void transferMoney(Long from, Long to, BigDecimal amount) {
-    accountRepo.debit(from, amount);
-    accountRepo.credit(to, amount);
-}
-```
-
-**Externalize configuration**:
-```java
-// Bad: Hardcoded
-private static final String API_URL = "https://prod.api.com";
-
-// Good: External config
-@Value("${api.url}")
-private String apiUrl;
-```
-
-### 6. Performance Considerations
-
-**Avoid N+1 problem**:
-```java
-// Bad: N+1
-List<Order> orders = orderRepo.findAll();
-for (Order order : orders) {
-    List<Item> items = itemRepo.findByOrderId(order.getId()); // N queries!
-}
-
-// Good: JOIN FETCH
-@Query("SELECT o FROM Order o LEFT JOIN FETCH o.items")
-List<Order> findAllWithItems();
-```
-
-**Avoid I/O operations in loops**:
-```java
-// Bad
-for (Long userId : userIds) {
-    User user = userService.findById(userId); // N queries
-    sendEmail(user);
-}
-
-// Good
-List<User> users = userService.findByIds(userIds); // 1 query
-users.forEach(this::sendEmail);
-```
+- Names clearly express intent (no abbreviations)
+- Methods are short and do one thing
+- Nesting depth ≤ 3
+- No swallowed exceptions (catch with no context)
+- No I/O operations in loops
 
 ## Review Checklist
 
+### Avoiding Over-design
+- [ ] No premature abstraction (Rule of Three)
+- [ ] No hypothetical design (YAGNI)
+- [ ] No meaningless single-implementation interfaces
+- [ ] Complexity matches the problem
+
 ### Naming and Readability
 - [ ] Variable/method names clearly express intent
-- [ ] No hard-to-understand abbreviations
 - [ ] Boolean uses is/has/can prefix
 
 ### Method Design
 - [ ] Methods are short, do one thing
-- [ ] Nesting levels no more than 2-3
-- [ ] Reasonable number of parameters (no more than 3-4)
-
-### Avoiding Over-design
-- [ ] No premature abstraction
-- [ ] No hypothetical design
-- [ ] No meaningless interfaces
-- [ ] Complexity matches the problem
+- [ ] Nesting levels ≤ 3
+- [ ] Parameters ≤ 4
 
 ### Exception Handling
 - [ ] No swallowed exceptions
 - [ ] Exception messages have sufficient context
-- [ ] Using specific exception types
+- [ ] Specific exception types
 
 ### Spring Boot
-- [ ] Using Constructor Injection
-- [ ] Transaction boundaries are clear
-- [ ] Configuration is externalized
+- [ ] Constructor injection
+- [ ] `@Transactional` on service layer only
+- [ ] No `@Transactional` self-invocation
 
 ### Performance
 - [ ] No N+1 problems
@@ -305,9 +133,12 @@ users.forEach(this::sendEmail);
 ### 總結
 一句話總結程式碼品質和主要改進方向
 
-## Remember
+## Gotchas
 
-1. **Clean Code > Clever Code**: Better to write "dumb" but clear code
-2. **NEVER Over-design**: Solve the current problem only
-3. **Be pragmatic**: Consider actual maintenance cost
-4. **Give specific suggestions**: Don't just say what's wrong, say how to fix it
+<!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->
+
+- **讀完整上下文再下結論**：不要只看 diff 就說「這個方法太長」，先確認整個類別的職責
+- **「建議抽 interface」之前先確認多實作需求**：單一實作的 interface 是 over-design，不是最佳實踐
+- **Lombok @Data 在 Entity 上有問題**：自動生成的 `equals`/`hashCode` 包含所有欄位，導致 Hibernate proxy 比較失敗，應改用 `@Getter @Setter`
+- **小心 reviewer bias**：不要把「我習慣的寫法」當成「正確的寫法」，提建議前想清楚為什麼
+- **@Transactional self-invocation 不觸發代理**：同一 class 內部呼叫不會走 Spring AOP proxy，這是常見的 bug 來源
