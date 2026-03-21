@@ -106,6 +106,12 @@ verify(emailService).sendOrderCompletionEmail(orderId);
 - 需要刪除的測試（附理由）
 - 需要重構的測試（附前後對比）
 
+## When to Apply
+
+- 單元測試程式碼品質審查
+- 測試設計討論或覆蓋率評估
+- 測試 over-design 檢查
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->

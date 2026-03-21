@@ -133,6 +133,12 @@ class UserService { ... }
 ### 總結
 一句話總結程式碼品質和主要改進方向
 
+## When to Apply
+
+- Java/Spring Boot 程式碼品質審查
+- Clean Code 合規性檢查
+- Over-design 偵測與簡化建議
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->

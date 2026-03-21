@@ -141,6 +141,13 @@ Formula: `CPU cores * 2 + disk spindles` (e.g., 4-core server = pool size 9).
 
 ---
 
+## When to Apply
+
+- 資料庫程式碼審查（index 設計、查詢模式）
+- JPA/Hibernate 效能調校
+- EXPLAIN plan 分析
+- 補充 /optimize-query 的領域知識
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->

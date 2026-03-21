@@ -393,6 +393,13 @@ After optimizing:
 6. **Consider Caching** (for rarely changing, frequently read data)
 7. **Database Connection Pooling** (prevent connection overhead)
 
+## When to Apply
+
+- 慢查詢分析或 EXPLAIN plan 審查
+- N+1 查詢問題排查
+- SQL/JPA 效能瓶頸排除
+- Index 設計或調整建議
+
 ## When NOT to Optimize
 
 - Table has < 1000 rows (overhead > benefit)

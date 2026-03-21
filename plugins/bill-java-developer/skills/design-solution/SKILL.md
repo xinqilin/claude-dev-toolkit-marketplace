@@ -113,6 +113,12 @@ Produce an actionable Todo List with phases.
 | **總計** | **X 天** | |
 ```
 
+## When to Apply
+
+- 新功能需求需要技術方案設計
+- 架構規劃或 implementation strategy 討論
+- 需要產出可執行的 Todo List
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->

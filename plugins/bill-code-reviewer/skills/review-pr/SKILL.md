@@ -111,6 +111,12 @@ git diff <base>..<compare> | grep -E "System.out.println|TODO|FIXME|XXX"
 **建議合併時機**: [條件]
 ```
 
+## When to Apply
+
+- PR 變更審查（GitHub PR 或 branch 比較）
+- 合併前的品質把關
+- 跨檔案變更的影響分析
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->

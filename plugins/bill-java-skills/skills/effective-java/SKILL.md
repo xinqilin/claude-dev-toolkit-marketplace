@@ -177,6 +177,12 @@ public Order findOrder(OrderId id) {
 
 ---
 
+## When to Apply
+
+- Java 程式碼涉及物件建立模式（factory, builder）
+- equals/hashCode、Optional、Stream API 使用審查
+- 例外處理或泛型設計討論
+
 ## Gotchas
 
 <!-- 持續更新：遇到新的 Claude 常犯錯誤時加入 -->
