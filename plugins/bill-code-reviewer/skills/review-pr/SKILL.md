@@ -3,7 +3,6 @@ name: review-pr
 description: Use when reviewing PR changes, comparing branches, or analyzing GitHub pull requests. Supports both gh CLI (PR number) and git diff (branch comparison) modes.
 argument-hint: "[compare-branch-or-pr-number] [base-branch]"
 allowed-tools: Read, Grep, Glob, Bash
-model: sonnet
 context: fork
 ---
 

@@ -3,7 +3,6 @@ name: review-test
 description: Use PROACTIVELY when reviewing unit test code quality, discussing test design, or evaluating test coverage for Java/Spring Boot projects.
 argument-hint: [test-file-or-directory]
 allowed-tools: Read, Grep, Glob
-model: sonnet
 ---
 
 # Review Unit Test

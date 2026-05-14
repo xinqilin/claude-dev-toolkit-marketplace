@@ -3,7 +3,6 @@ name: design-solution
 description: Use when user needs technical design advice, architecture planning, or implementation strategy for Spring Boot projects. Produces actionable Todo List.
 argument-hint: [requirement-description]
 allowed-tools: Read, Grep, Glob, Bash
-model: sonnet
 ---
 
 # Design Solution

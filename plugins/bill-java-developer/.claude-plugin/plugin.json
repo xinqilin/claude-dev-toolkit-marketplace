@@ -9,6 +9,5 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["java", "spring-boot", "jpa", "database", "performance", "enterprise", "mysql", "optimization", "hibernate"],
-  "agents": "./agents/bill-java-developer.md",
   "skills": "./skills/"
 }

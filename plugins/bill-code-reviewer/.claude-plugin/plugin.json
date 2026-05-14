@@ -9,6 +9,5 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["code-review", "clean-code", "refactoring", "design-patterns", "java", "architecture", "best-practices"],
-  "agents": "./agents/bill-code-reviewer.md",
   "skills": "./skills/"
 }

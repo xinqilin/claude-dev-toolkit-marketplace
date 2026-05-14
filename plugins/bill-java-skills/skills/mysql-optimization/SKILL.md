@@ -3,7 +3,6 @@ name: mysql-optimization
 description: MySQL performance optimization guide for Spring Boot/JPA. Use when reviewing database code, discussing index design, query optimization, N+1 problems, JPA/Hibernate tuning, or analyzing EXPLAIN plans. Complements /optimize-query command.
 user-invocable: false
 allowed-tools: Read, Grep, Glob
-model: sonnet
 ---
 
 # MySQL Performance Optimization

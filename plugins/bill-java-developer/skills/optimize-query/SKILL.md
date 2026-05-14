@@ -3,7 +3,6 @@ name: optimize-query
 description: Use when analyzing slow queries, optimizing SQL/JPA performance, reviewing EXPLAIN plans, or troubleshooting database bottlenecks.
 argument-hint: [file-or-query]
 allowed-tools: Read, Grep, Glob, Bash
-model: sonnet
 context: fork
 ---
 

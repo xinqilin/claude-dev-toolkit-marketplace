@@ -9,6 +9,5 @@
   "repository": "https://github.com/xinqilin/claude-dev-toolkit-marketplace",
   "license": "MIT",
   "keywords": ["java", "unit-test", "testing", "junit", "spring-boot-test", "tdd", "test-review"],
-  "agents": "./agents/bill-billing-unit-test-reviewer.md",
   "skills": "./skills/"
 }

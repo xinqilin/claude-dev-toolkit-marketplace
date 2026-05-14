@@ -9,8 +9,10 @@ Claude Code plugin repository for Java/Spring Boot development. Contains 4 indep
 ## Architecture
 
 ```
+.claude-plugin/marketplace.json    # Marketplace manifest (repo-level, lists all plugins)
 plugins/
   <plugin-name>/
+    .claude-plugin/plugin.json     # Per-plugin manifest (required by /plugin UI)
     agents/<name>.md               # Agent definition (YAML frontmatter + instructions)
     skills/<skill-name>/           # Skill folder (slash command or knowledge base)
       SKILL.md                     # Core principles + YAML frontmatter
@@ -18,6 +20,8 @@ plugins/
 install.sh                         # Symlink installer (~/.claude/agents, ~/.claude/skills)
 uninstall.sh                       # Remove symlinks
 ```
+
+Both `marketplace.json` (root) and per-plugin `plugin.json` must exist for `/plugin` UI distribution; `install.sh` only reads the filesystem and ignores them.
 
 ## Plugin Components
 
@@ -35,7 +39,10 @@ uninstall.sh                       # Remove symlinks
 ## YAML Frontmatter Fields
 
 Agent files (`agents/*.md`):
-- `name`, `description`, `tools`, `model`
+- `name`, `description`, `tools`
+- `maxTurns` - cap on conversation turns the agent may run
+- `permissionMode` - e.g. `acceptEdits` for developer agents, omit for read-only reviewers
+- `color` - UI hint shown in agent picker
 - `skills` - preload skills into agent context on startup
 - `memory` - persistence level (`project` for cross-session learning)
 - `disallowedTools` - explicitly forbid tools (e.g. reviewers forbid Edit, Write)
@@ -44,7 +51,7 @@ Skill files (`skills/*/SKILL.md`):
 - `name` - determines the `/name` slash command
 - `description` - trigger conditions
 - `argument-hint` - shown in autocomplete
-- `allowed-tools`, `model` - optional
+- `allowed-tools` - optional
 - `user-invocable` - set `false` for knowledge-base skills (hidden from `/` menu)
 - `context` - set `fork` for heavy skills that should run in isolated context
 
@@ -66,6 +73,19 @@ Two approaches (both work):
 ```
 
 Symlinks target `~/.claude/agents/` and `~/.claude/skills/`.
+
+## Verifying Changes
+
+There is no build/test/lint pipeline — a plugin is correct when JSON parses, frontmatter is valid, and symlinks point to this repo.
+
+```bash
+./install.sh --list                                     # Enumerate plugins + agents + skills
+jq . .claude-plugin/marketplace.json                    # Validate marketplace manifest
+find plugins -name plugin.json -exec jq . {} \;         # Validate every plugin.json
+ls -l ~/.claude/agents ~/.claude/skills | grep $(pwd)   # Confirm symlinks point here
+```
+
+After editing an agent/skill that's already symlinked, no reinstall is needed — open a new Claude Code session and the change is picked up.
 
 ## Gotchas
 

@@ -2,7 +2,6 @@
 name: bill-billing-unit-test-reviewer
 description: Senior unit test reviewer. Use PROACTIVELY when reviewing test code or discussing test design and TDD practices.
 tools: Read, Grep, Glob, Bash
-model: sonnet
 maxTurns: 30
 permissionMode: plan
 color: cyan

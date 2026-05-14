@@ -3,7 +3,6 @@ name: code-review
 description: Use PROACTIVELY when reviewing Java/Spring Boot code quality, Clean Code compliance, or over-design concerns.
 argument-hint: [file-or-directory]
 allowed-tools: Read, Grep, Glob, Bash
-model: sonnet
 ---
 
 # Code Review
